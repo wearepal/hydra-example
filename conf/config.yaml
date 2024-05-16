@@ -1,0 +1,6 @@
+defaults:
+  # The first entry here always has to be the name we have passed to `register_hydra_config`.
+  - config_schema
+  # Then we can choose defaults for the different config groups.
+  - dm: cmnist
+  - model: fcn

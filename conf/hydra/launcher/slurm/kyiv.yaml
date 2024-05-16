@@ -1,0 +1,15 @@
+---
+# usage: hydra/launcher=slurm/kyiv
+
+defaults:
+  - submitit_slurm
+
+partition: kyiv
+# How many CPUs to request
+cpus_per_task: 24
+timeout_min: 99999 # 99999 minutes = a few months
+
+# Request special resources: 1 GPU
+gres: "gpu:1"
+# Name of the SLURM job
+name: hydra-example

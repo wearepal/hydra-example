@@ -1,0 +1,6 @@
+defaults:
+  # Specify here the name of the entry in the `dm` config group you want to extend.
+  - celeba
+
+superclass: SMILING
+subclass: MALE

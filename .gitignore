@@ -1,0 +1,20 @@
+# python generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# venv
+.venv
+
+# hydra
+/outputs/
+/multirun/
+
+# rye
+/.python-version
+
+# wandb
+/local_logging/

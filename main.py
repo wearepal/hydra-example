@@ -35,7 +35,9 @@ def main(hydra_config: omegaconf.DictConfig) -> None:
 
 if __name__ == "__main__":
     # Before calling the main function, we need to register the main `Config` class and
-    # the configuration groups.
-    # Without this, hydra doesn't know which keys and values are valid in the configuration.
+    # the configuration groups. Without this, hydra doesn't know which keys and values are valid in
+    # the configuration.
+    # Whatever you set here as `schema_name` will need to be incluced as the first entry in the
+    # `defaults` list in the main config yaml file (`conf/config.yaml`).
     register_hydra_config(Config, CONFIG_GROUPS, schema_name="config_schema")
     main()

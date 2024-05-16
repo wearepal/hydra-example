@@ -95,7 +95,7 @@ class SimpleCNNFactory(ModelFactory):
     activation: Activation = Activation.RELU
 
     @override
-    def build(self, in_dim: int, *, out_dim: int) -> nn.Module:
+    def build(self, in_dim: int, *, out_dim: int) -> nn.Sequential:
         return nn.Sequential(
             nn.Conv2d(in_channels=in_dim, out_channels=6, kernel_size=self.kernel_size),
             self.activation.init(),

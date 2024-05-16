@@ -1,0 +1,12 @@
+# @package _global_
+---
+defaults:
+  - override /dm: cmnist
+  - override /model: cnn
+
+dm:
+  num_colors: 10
+  val_prop: 0.2
+
+model:
+  kernel_size: 5

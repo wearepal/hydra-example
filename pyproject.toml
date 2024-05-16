@@ -23,6 +23,7 @@ pythonVersion = "3.10"
 typeCheckingMode = "strict"
 venvPath = "."
 venv = ".venv"
+reportUnknownMemberType = "none"
 
 [tool.ruff]
 line-length = 100

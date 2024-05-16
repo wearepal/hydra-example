@@ -8,6 +8,7 @@ import torch
 from src.datasets import CelebADataModule, ColoredMNISTDataModule, DataModule
 from src.logging import WandbCfg
 from src.models import FcnFactory, ModelFactory, SimpleCNNFactory
+from src.optimisation import OptimisationCfg
 
 __all__ = ["Config", "CONFIG_GROUPS"]
 
@@ -30,8 +31,9 @@ class Config:
     dm: DataModule
     model: ModelFactory
 
-    # This is a normal subconfig, for which we can specify a default,
-    # but note that in dataclasses, the default cannot be mutable, so we use `default_factory`.
+    # These are normal subconfigs, for which we can specify defaults,
+    # but note that in dataclasses, the default may not be mutable, so we use `default_factory`.
+    opt: OptimisationCfg = field(default_factory=OptimisationCfg)
     wandb: WandbCfg = field(default_factory=WandbCfg)
 
     # These are normal fields, for which we can specify defaults.
@@ -45,9 +47,9 @@ class Config:
         torch.manual_seed(self.seed)
 
         # Initialize the logger.
-        run = self.wandb.init(config_for_logging, reinit=True)
-        if run is not None:
-            run.log({"accuracy": 0.5})
+        wandb_run = self.wandb.init(config_for_logging, reinit=True)
+        if wandb_run is not None:
+            wandb_run.log({"accuracy": 0.5})
 
         # Prepare the data module.
         self.dm.prepare(seed=self.seed)

@@ -46,12 +46,17 @@ python main.py --help
 ```
 
 It should look like this:
+
+<details>
+<summary> Help output (quite long) </summary>
+
 ```
 == Configuration groups ==
 Compose your configuration from those groups (group=option)
 
 dm: celeba, cmnist
 dm/celeba: male_blond, male_smiling
+experiment: cmnist_cnn, good_model
 model: cnn, fcn, single_linear_layer
 
 
@@ -78,6 +83,11 @@ model:
   dropout_prob: 0.0
   final_bias: true
   input_norm: false
+opt:
+  lr: 5.0e-05
+  weight_decay: 0.0
+  optimizer_cls: torch.optim.AdamW
+  optimizer_kwargs: null
 wandb:
   name: null
   dir: ./local_logging
@@ -93,6 +103,8 @@ wandb:
 seed: 42
 gpu: 0
 ```
+
+</details>
 
 We can see that `seed` and `gpu` are "top-level" config values, but there are also a lot of values in subconfigs. For example, we can change the `num_hidden` value in the `model` config:
 ```bash
@@ -149,6 +161,12 @@ You can also set
 python main.py dm=celeba/male_smiling
 ```
 
+### W&B config
+To enable W&B logging, you can set the `wandb.mode` to "online" or "offline" (default is "disabled"):
+```bash
+python main.py wandb.mode=online
+```
+
 ## Multiruns
 Often, we want to run the same experiment with only slightly different configurations. This can be done with the `--multirun` flag. For example, to run the code with seeds 42 and 43, we can do:
 ```bash
@@ -186,6 +204,82 @@ By default, Hydra simply runs the code with the different config values sequenti
 python main.py --multirun seed=42,43 hydra/launcher=slurm/kyiv
 ```
 
+Hydra doesn't limit you to iterating over just one parameter. You can also iterate over multiple parameters. For example, to run the code with seeds 42 and 43 and `model.num_hidden` set to 1, 2 and 3, you can do:
+```bash
+python main.py --multirun seed=42,43 model.hidden_dim=10 model.num_hidden=1,2,3 gpu=0
+```
+This will start 6 jobs: 2 seeds x 3 `model.num_hidden` values.
+
+## Experiment configs
+Hydra commands can get very long when we specify many config values. To make this easier, we can define "experiment configs" in the `conf/experiment/` directory.
+
+For example, let's say that after a lot of experimentation, we found that the following config values work well together:
+```bash
+python main.py model=fcn model.num_hidden=2 model.hidden_dim=10 model.norm=LN model.input_norm=true model.activation=SELU opt.lr=0.001 opt.weight_decay=0.001
+```
+
+We can then create a new experiment config file at `conf/experiment/good_model.yaml` with the following content:
+```yaml
+# @package _global_
+---
+defaults:
+  - override /model: fcn
+
+model:
+  num_hidden: 2
+  hidden_dim: 10
+  norm: LN
+  input_norm: true
+  activation: SELU
+
+opt:
+  lr: 0.001
+  weight_decay: 0.001
+```
+
+Note that the comment `# @package _global_` is required. (The reason is that, by default, if you have a config file in the `conf/experiment/` directory, Hydra will want to associate this with the `experiment` entry in the main configuration – which doesn't exist! So, `@package _global_` tells Hydra to put the content of the file at the *top level* of the main config.)
+
+And then we can run the code with these config values by running:
+```bash
+python main.py +experiment=good_model
+```
+
+You can still override values:
+```bash
+python main.py +experiment=good_model model.hidden_dim=20
+```
+
+## How to make your code easily configurable with Hydra
+What we found is the best method to structure your code to make it easy to configure with Hydra is the "builder" or "factory" pattern.
+
+This means you have a dataclass that contains all the configuration values for a particular component of your code (e.g. the model, the data, the optimiser, etc.). And then this class has a `build()` or `init()` method that takes additional arguments which are only available at runtime (e.g. the input size of the model, the number of classes in the dataset, etc.), and then instantiates the component.
+
+For example, in this code base, we have the `ModelFactory` class in `src/model.py`:
+```python
+@dataclass(eq=False)
+class ModelFactory(ABC):
+    """Interface for model factories."""
+
+    @abstractmethod
+    def build(self, in_dim: int, *, out_dim: int) -> nn.Module:
+        raise NotImplementedError()
+```
+And when you add a model to the code base, you subclass `ModelFactory` and implement the `build()` method:
+```python
+@dataclass(eq=False, kw_only=True)
+class SimpleCNNFactory(ModelFactory):
+    """Factory for a very simple CNN."""
+
+    kernel_size: int = 5
+    pool_stride: int = 2
+    activation: Activation = Activation.RELU
+
+    @override
+    def build(self, in_dim: int, *, out_dim: int) -> nn.Sequential:
+        ...
+```
+
+
 ## Structure of the code
 
 - `main.py`: The main entry point of the code. It sets up Hydra and then calls the main `run()` function.
@@ -193,6 +287,7 @@ python main.py --multirun seed=42,43 hydra/launcher=slurm/kyiv
   - `run.py`: Contains the main `Config` class that is used to define valid config values. It also contains the `run()` function that is called by `main.py`.
   - `data.py`: Contains the `DataModule` class that is used to load the data.
   - `model.py`: Contains the `ModelFactory` class that is used to create the model.
+  - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
 - `conf/`
   - `config.yaml`: The main config file for the project. It sets the default values for `dm` and `model`.

@@ -1,3 +1,4 @@
+---
 defaults:
   # The first entry here always has to be the name we have passed to `register_hydra_config`.
   - config_schema

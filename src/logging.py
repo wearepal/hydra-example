@@ -1,17 +1,15 @@
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Any, TypeAlias, Union
+from typing import Any, TypeAlias
 
 import wandb
+from wandb import sdk
+from wandb.sdk import lib
 
 __all__ = ["WandbCfg"]
 
 WandbMode = Enum("WandbMode", ["online", "offline", "disabled"])
-Run: TypeAlias = Union[  # noqa: UP007
-    wandb.sdk.wandb_run.Run,  # type: ignore
-    wandb.sdk.lib.disabled.RunDisabled,  # type: ignore
-    None,
-]
+Run: TypeAlias = sdk.wandb_run.Run | lib.disabled.RunDisabled | None
 
 
 @dataclass

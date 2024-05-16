@@ -46,6 +46,8 @@ class Config:
 
         # Initialize the logger.
         run = self.wandb.init(config_for_logging, reinit=True)
+        if run is not None:
+            run.log({"accuracy": 0.5})
 
         # Prepare the data module.
         self.dm.prepare(seed=self.seed)

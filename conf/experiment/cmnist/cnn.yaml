@@ -10,3 +10,6 @@ dm:
 
 model:
   kernel_size: 5
+
+opt:
+  lr: 1.e-3

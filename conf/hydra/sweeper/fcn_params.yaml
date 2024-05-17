@@ -3,6 +3,7 @@
 # usage: hydra/sweeper=fcn_params
 #
 defaults:
+  # Select here which hyperparameter optimization library to use.
   - optuna
 
 sampler:
@@ -12,7 +13,10 @@ study_name: fcn_params
 n_trials: 25
 n_jobs: 3
 direction:
+  # The direction depends on what you are returning from your main() function.
   - maximize
 
 params:
   opt.lr: tag(log, interval(1.e-5, 1.e-3))
+  model.num_hidden: range(1, 4)
+  model.dropout_prob: choice(0.0, 0.1)

@@ -40,7 +40,7 @@ class Config:
     seed: int = 42
     gpu: int = 0  # Set to -1 to use CPU.
 
-    def run(self, config_for_logging: dict[str, Any]) -> None:
+    def run(self, config_for_logging: dict[str, Any]) -> float:
         """Run the experiment."""
         print(f"Starting a run with seed {self.seed} and GPU {self.gpu}.")
         # Set the seed for reproducibility.
@@ -59,3 +59,10 @@ class Config:
 
         print("Model architecture:")
         print(model)
+
+        # At the end, we return a value representing how well the model performed on the validation
+        # set. That can be the validation loss or validation accuracy, for example. This value is
+        # used for hyperparameter optimization.
+        # If you don't intend to perform hyperparameter optimization, you don't have to return
+        # anything.
+        return 0.5

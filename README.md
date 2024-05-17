@@ -54,9 +54,9 @@ It should look like this:
 == Configuration groups ==
 Compose your configuration from those groups (group=option)
 
-dm: celeba, cmnist
-dm/celeba: male_blond, male_smiling
-experiment: cmnist_cnn, good_model
+dm: celeba, celeba_male_blond, celeba_male_smiling, celeba_male_smiling_small, cmnist
+experiment: good_run
+experiment/cmnist: cnn
 model: cnn, fcn, single_linear_layer
 
 
@@ -151,20 +151,47 @@ This tells us that we can set the `kernel_size`, `pool_stride`, and `activation`
 python main.py model=cnn model.kernel_size=3 model.pool_stride=1 model.activation=SELU
 ```
 
-### Different dataset
-To explore the different datasets, you can try
-```bash
-python main.py dm=celeba --help
-```
-You can also set
-```bash
-python main.py dm=celeba/male_smiling
-```
-
 ### W&B config
 To enable W&B logging, you can set the `wandb.mode` to "online" or "offline" (default is "disabled"):
 ```bash
 python main.py wandb.mode=online
+```
+
+## Basics of config files
+Let's say you are often working with a configuration of the CelebA dataset which looks like this:
+```bash
+python main.py dm=celeba dm.superclass=SMILING dm.subclass=MALE
+```
+
+(Once again, you can set `dm=celeba` and use `--help` to see the available options for the CelebA dataset.)
+
+But after a while, it gets tiring to always type this out. Instead, you can create a config file in the `conf/dm/` directory to store often-used datamodule configurations. For example, you can create a file `conf/dm/celeba_male_smiling.yaml` with the following content:
+```yaml
+defaults:
+  - celeba
+
+superclass: SMILING
+subclass: MALE
+```
+
+You can think of the `defaults` entry as specifying inheritance.
+
+Subsequently, you can use the config file like this:
+```bash
+python main.py dm=celeba_male_smiling
+```
+
+You can still override any values on the command line, just as before:
+```bash
+python main.py dm=celeba_male_smiling dm.superclass=BLOND dm.default_res=64
+```
+
+And you can create config files which inherit from other config files you created. For example, you can create a file `conf/dm/celeba_male_smiling_small.yaml` with the following content:
+```yaml
+defaults:
+  - celeba_male_smiling
+
+default_res: 64
 ```
 
 ## Multiruns
@@ -210,27 +237,62 @@ python main.py --multirun seed=42,43 model.hidden_dim=10 model.num_hidden=1,2,3 
 ```
 This will start 6 jobs: 2 seeds x 3 `model.num_hidden` values.
 
-## Experiment configs
-Hydra commands can get very long when we specify many config values. To make this easier, we can define "experiment configs" in the `conf/experiment/` directory.
+## Hyperparameter search
+If you don't want to just blindly try out model parameters, you can also use Hydra to perform hyperparameter search with libraries like Optuna, Nevergrad, and Ax.
 
-For example, let's say that after a lot of experimentation, we found that the following config values work well together:
-```bash
-python main.py model=fcn model.num_hidden=2 model.hidden_dim=10 model.norm=LN model.input_norm=true model.activation=SELU opt.lr=0.001 opt.weight_decay=0.001
+In order to use any of these libraries, you need to return a value from the function decorated with `@hydra.main(...)` (located in `main.py`). The value should be a `float` and should represent the metric you want to optimize. For example, if you want to optimize the accuracy of the model, you can return the validation accuracy. If you want to minimize the loss, you can return the validation loss.
+
+To use Optuna, for example, create a config file in `conf/hydra/sweeper/`. The name doesn't matter, but we'll choose `fcn_params.yaml` and fill the content like this:
+```yaml
+defaults:
+  # Select here which hyperparameter optimization library to use.
+  - optuna
+
+sampler:
+  warn_independent_sampling: true
+
+study_name: fcn_params
+n_trials: 25
+n_jobs: 3
+direction:
+  # The direction depends on what you are returning from your main() function.
+  - maximize
+
+params:
+  opt.lr: tag(log, interval(1.e-5, 1.e-3))
+  model.num_hidden: range(1, 4)
+  model.dropout_prob: choice(0.0, 0.1)
 ```
 
-We can then create a new experiment config file at `conf/experiment/good_model.yaml` with the following content:
+Let's break down what's going on here:
+
+- First, we select the right `defaults` value. In this case, we want to use Optuna, so we set `optuna`.
+- Then, some settings for Optuna follow. To see all available settings, check out the docs: https://hydra.cc/docs/plugins/optuna_sweeper/
+- Finally, we specify `params`, which is the heart of this config file. Here, we specify the parameters we want to optimize. For each parameter, we have to specify the search space. For example, `opt.lr: tag(log, interval(1.e-5, 1.e-3))` means that we want to optimize the `opt.lr` parameter and we want to search in the log space between `1.e-5` and `1.e-3`. The `model.num_hidden: range(1, 4)` we want to search in the range from 1 to 3 (inclusive). The `model.dropout_prob: choice(0.0, 0.1)` means that we want to choose between 0.0 and 0.1.
+
+## Global experiment configs
+We already saw that you can create config files to, for example, save a common data module configuration – such a config file is then put in `conf/dm/`. However, such config files can only configure one subcomponent of the whole configuration. This means you might end up with long commands like this one:
+```bash
+python main.py model=single_linear_layer model.activation=SELU dm=celeba_male_smiling_small dm.download=false gpu=0 seed=1 opt.lr=0.001 opt.weight_decay=0.001
+```
+which you have to type over and over again.
+
+Luckily, we can define "experiment configs" in the `conf/experiment/` directory, that act as *global* configurations. For the above command, we can create a file at `conf/experiment/good_run.yaml` with the following content:
 ```yaml
 # @package _global_
 ---
 defaults:
-  - override /model: fcn
+  - override /model: single_linear_layer
+  - override /dm: celeba_male_smiling_small
+
+seed: 1
+gpu: 0
 
 model:
-  num_hidden: 2
-  hidden_dim: 10
-  norm: LN
-  input_norm: true
   activation: SELU
+
+dm:
+  download: false
 
 opt:
   lr: 0.001
@@ -241,13 +303,21 @@ Note that the comment `# @package _global_` is required. (The reason is that, by
 
 And then we can run the code with these config values by running:
 ```bash
-python main.py +experiment=good_model
+python main.py +experiment=good_run
 ```
 
 You can still override values:
 ```bash
-python main.py +experiment=good_model model.hidden_dim=20
+python main.py +experiment=good_run model.hidden_dim=20
 ```
+
+**Note**: It's very easy to fall into the trap of defining *everything* in these global experiment configs, but that leads to lots of duplication. Try to put as much configuration as possible into the component-specific config files (i.e., those in `conf/dm/` and `/conf/model` and so on), because those configs are very easy to reuse across different experiments.
+
+As the experiment configs are global, the directory structure doesn't matter at all. You can put a file into `conf/experiment/cmnist/cnn.yaml` and call it with
+```bash
+python main.py +experiment=cmnist/cnn
+```
+and it will work fine.
 
 ## How to make your code easily configurable with Hydra
 What we found is the best method to structure your code to make it easy to configure with Hydra is the "builder" or "factory" pattern.
@@ -256,7 +326,7 @@ This means you have a dataclass that contains all the configuration values for a
 
 For example, in this code base, we have the `ModelFactory` class in `src/model.py`:
 ```python
-@dataclass(eq=False)
+@dataclass(eq=False)  # note that this should be a dataclass even though it has no fields
 class ModelFactory(ABC):
     """Interface for model factories."""
 
@@ -276,7 +346,7 @@ class SimpleCNNFactory(ModelFactory):
 
     @override
     def build(self, in_dim: int, *, out_dim: int) -> nn.Sequential:
-        ...
+        # (implementation of the model)
 ```
 
 

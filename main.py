@@ -9,12 +9,11 @@ from src.run import CONFIG_GROUPS, Config
 # Meaning of the parameters to @hydra.main():
 #     config_path: The path to the directory containing the yaml config files.
 #     config_name: The name of the config file without the ".yaml" extension.
-#     version_base: The version of hydra semantics to use.
-#                   If None, the latest version is used.
+#     version_base: The version of hydra semantics to use. "1.3" is the latest version.
 
 
-@hydra.main(config_path="conf", config_name="config", version_base=None)
-def main(hydra_config: omegaconf.DictConfig) -> None:
+@hydra.main(config_path="conf", config_name="config", version_base="1.3")
+def main(hydra_config: omegaconf.DictConfig) -> float:
     # The `hydra_config` object we get is essentially a dictionary.
     # We can convert it to an object of the `Config` class using the `instantiate` function.
     # That is what is meant by the `_convert_="object"` argument.
@@ -30,7 +29,7 @@ def main(hydra_config: omegaconf.DictConfig) -> None:
     config_for_logging["cmd"] = reconstruct_cmd()
 
     # Finally, we call the `run` method of the `Config` object.
-    config.run(config_for_logging)
+    return config.run(config_for_logging)
 
 
 if __name__ == "__main__":

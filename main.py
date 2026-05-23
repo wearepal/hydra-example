@@ -1,5 +1,4 @@
 import hydra
-from hydra.utils import instantiate
 import omegaconf
 from ranzen.hydra import prepare_for_logging, reconstruct_cmd, register_hydra_config
 
@@ -15,11 +14,8 @@ from src.run import CONFIG_GROUPS, Config
 @hydra.main(config_path="conf", config_name="config", version_base="1.3")
 def main(hydra_config: omegaconf.DictConfig) -> float:
     # The `hydra_config` object we get is essentially a dictionary.
-    # We can convert it to an object of the `Config` class using the `instantiate` function.
-    # That is what is meant by the `_convert_="object"` argument.
-    # The `_recursive_=True` argument tells Hydra to recursively instantiate nested objects.
-
-    config = instantiate(hydra_config, _convert_="object", _recursive_=True)
+    # We convert it to an object of the `Config` class using `OmegaConf.to_object()`.
+    config = omegaconf.OmegaConf.to_object(hydra_config)
     assert isinstance(config, Config)
 
     # `prepare_for_logging` takes a hydra config dict and makes it prettier for logging.
@@ -34,9 +30,9 @@ def main(hydra_config: omegaconf.DictConfig) -> float:
 
 if __name__ == "__main__":
     # Before calling the main function, we need to register the main `Config` class and
-    # the configuration groups. Without this, hydra doesn't know which keys and values are valid in
-    # the configuration.
-    # Whatever you set here as `schema_name` will need to be incluced as the first entry in the
-    # `defaults` list in the main config yaml file (`conf/config.yaml`).
+    # the configuration groups. Without this, hydra doesn't know which keys and values
+    # are valid in the configuration.
+    # Whatever you set here as `schema_name` will need to be incluced as the first entry
+    # in the `defaults` list in the main config yaml file (`conf/config.yaml`).
     register_hydra_config(Config, CONFIG_GROUPS, schema_name="config_schema")
     main()

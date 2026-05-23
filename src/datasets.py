@@ -2,8 +2,8 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
+from typing import Literal, TypeAlias
 from typing_extensions import override
 
 from torch import Tensor
@@ -34,10 +34,7 @@ class DataModule(ABC):
     def prepare(self, seed: int) -> None: ...
 
 
-class CelebAttr(Enum):
-    BLOND_HAIR = "Blond_Hair"
-    MALE = "Male"
-    SMILING = "Smiling"
+CelebAttr: TypeAlias = Literal["Blond_Hair", "Male", "Smiling"]
 
 
 @dataclass(kw_only=True, eq=False)
@@ -45,8 +42,8 @@ class CelebADataModule(DataModule):
     """Data-module for the CelebA dataset."""
 
     default_res: int = 224
-    superclass: CelebAttr = CelebAttr.BLOND_HAIR
-    subclass: CelebAttr = CelebAttr.MALE
+    superclass: CelebAttr = "Blond_Hair"
+    subclass: CelebAttr = "Male"
     download: bool = False
     split_seed: int | None = None
 
@@ -65,7 +62,7 @@ class CelebADataModule(DataModule):
     @property
     @override
     def out_dim(self) -> int:
-        return len(CelebAttr)
+        return 3
 
     @override
     def prepare(self, seed: int) -> None:

@@ -31,9 +31,9 @@ class NormType(Enum):
         self.init = init
 
 
-# Even though the following abstract class doesn't have any fields, we nevertheless need to mark it
-# as a dataclass, because otherwise Hydra will complain when we use it as a type annotation in the
-# `Config` class.
+# Even though the following abstract class doesn't have any fields, we nevertheless need
+# to mark it as a dataclass, because otherwise Hydra will complain when we use it as a
+# type annotation in the `Config` class.
 
 
 @dataclass(eq=False)
@@ -68,7 +68,9 @@ class FcnFactory(ModelFactory):
         return block
 
     @override
-    def build(self, in_dim: int, *, out_dim: int, with_flatten: bool = False) -> nn.Sequential:
+    def build(
+        self, in_dim: int, *, out_dim: int, with_flatten: bool = False
+    ) -> nn.Sequential:
         predictor = nn.Sequential()
         if with_flatten:
             predictor.append(nn.Flatten())
@@ -78,7 +80,9 @@ class FcnFactory(ModelFactory):
         if self.num_hidden > 0:
             hidden_dim = in_dim if self.hidden_dim is None else self.hidden_dim
             for _ in range(self.num_hidden):
-                predictor.append(self._make_block(in_features=curr_dim, out_features=hidden_dim))
+                predictor.append(
+                    self._make_block(in_features=curr_dim, out_features=hidden_dim)
+                )
                 curr_dim = hidden_dim
         predictor.append(
             nn.Linear(in_features=curr_dim, out_features=out_dim, bias=self.final_bias)

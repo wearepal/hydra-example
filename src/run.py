@@ -12,9 +12,9 @@ from src.optimisation import OptimisationCfg
 
 __all__ = ["Config", "CONFIG_GROUPS"]
 
-# Configuration groups enable us to have different configurations for different subcomponents.
-# For example, one subcomponent is the data module, and we can have different data modules, CelebA
-# and ColoredMNIST, which need different keys and values to be configured.
+# Config groups enable us to have different configurations for different subcomponents.
+# For example, one subcomponent is the data module, and the different data modules,
+# CelebA and ColoredMNIST, need different keys and values to be configured.
 CONFIG_GROUPS = {
     "dm": {"celeba": CelebADataModule, "cmnist": ColoredMNISTDataModule},
     "model": {"fcn": FcnFactory, "cnn": SimpleCNNFactory},
@@ -31,8 +31,8 @@ class Config:
     dm: DataModule
     model: ModelFactory
 
-    # These are normal subconfigs, for which we can specify defaults,
-    # but note that in dataclasses, the default may not be mutable, so we use `default_factory`.
+    # These are normal subconfigs, for which we can specify defaults, but note that in
+    # dataclasses, the default may not be mutable, so we use `default_factory`.
     opt: OptimisationCfg = field(default_factory=OptimisationCfg)
     wandb: WandbCfg = field(default_factory=WandbCfg)
 
@@ -60,9 +60,9 @@ class Config:
         print("Model architecture:")
         print(model)
 
-        # At the end, we return a value representing how well the model performed on the validation
-        # set. That can be the validation loss or validation accuracy, for example. This value is
-        # used for hyperparameter optimization.
-        # If you don't intend to perform hyperparameter optimization, you don't have to return
-        # anything.
+        # At the end, we return a value representing how well the model performed on the
+        # validation set. That can be the validation loss or validation accuracy, for
+        # example. This value is used for hyperparameter optimization.
+        # If you don't intend to perform hyperparameter optimization, you don't have to
+        # return anything.
         return 0.5

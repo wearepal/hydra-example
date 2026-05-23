@@ -10,11 +10,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: eifinger/setup-rye@v3
+      - uses: actions/checkout@v6
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - name: Lint with ruff
         run: |
-          rye lint -- --output-format=github
+          uvx ruff check --output-format=github
       - name: Format with ruff
         run: |
-          rye fmt -- --diff .
+          uvx ruff format --diff .

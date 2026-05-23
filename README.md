@@ -1,17 +1,17 @@
 # An annotated example of using Hydra
 
-This code base in meant to show-case how to use hydra to manage configuration in a project.
+This code base in meant to show-case how to use Hydra to manage configuration in a project.
 
 ## Installing dependencies
 
-If you have `rye` installed:
+If you have `uv` installed:
 ```bash
-rye sync --no-lock
+uv sync
 ```
 
 If not, run (after activating an appropriate python env):
 ```bash
-pip install -r requirements.lock
+pip install -r pylock.toml
 ```
 
 ## Running the code
@@ -160,7 +160,7 @@ python main.py wandb.mode=online
 ## Basics of config files
 Let's say you are often working with a configuration of the CelebA dataset which looks like this:
 ```bash
-python main.py dm=celeba dm.superclass=SMILING dm.subclass=MALE
+python main.py dm=celeba dm.superclass=Smiling dm.subclass=Male
 ```
 
 (Once again, you can set `dm=celeba` and use `--help` to see the available options for the CelebA dataset.)
@@ -170,8 +170,8 @@ But after a while, it gets tiring to always type this out. Instead, you can crea
 defaults:
   - celeba
 
-superclass: SMILING
-subclass: MALE
+superclass: Smiling
+subclass: Male
 ```
 
 You can think of the `defaults` entry as specifying inheritance.
@@ -183,7 +183,7 @@ python main.py dm=celeba_male_smiling
 
 You can still override any values on the command line, just as before:
 ```bash
-python main.py dm=celeba_male_smiling dm.superclass=BLOND dm.default_res=64
+python main.py dm=celeba_male_smiling dm.superclass=Blond_Hair dm.default_res=64
 ```
 
 And you can create config files which inherit from other config files you created. For example, you can create a file `conf/dm/celeba_male_smiling_small.yaml` with the following content:
@@ -226,9 +226,9 @@ Sequential(
 )
 ```
 
-By default, Hydra simply runs the code with the different config values sequentially. But if you have access to a SLURM cluster, you can also run the jobs in parallel. To do this, we need to set `hydra/launcher=...` to the appropriate value. In this code base, there is a config file at `conf/hydra/launcher/slurm/kyiv.yaml` that has the correct settings for the Kyiv machine. To use it, we can run:
+By default, Hydra simply runs the code with the different config values sequentially. But if you have access to a SLURM cluster, you can also run the jobs in parallel. To do this, we need to set `hydra/launcher=...` to the appropriate value. In this code base, there is a config file at `conf/hydra/launcher/slurm_kyiv.yaml` that has the correct settings for the Kyiv machine. To use it, we can run:
 ```bash
-python main.py --multirun seed=42,43 hydra/launcher=slurm/kyiv
+python main.py --multirun seed=42,43 hydra/launcher=slurm_kyiv
 ```
 
 Hydra doesn't limit you to iterating over just one parameter. You can also iterate over multiple parameters. For example, to run the code with seeds 42 and 43 and `model.num_hidden` set to 1, 2 and 3, you can do:
@@ -355,14 +355,15 @@ class SimpleCNNFactory(ModelFactory):
 - `main.py`: The main entry point of the code. It sets up Hydra and then calls the main `run()` function.
 - `src/`
   - `run.py`: Contains the main `Config` class that is used to define valid config values. It also contains the `run()` function that is called by `main.py`.
-  - `data.py`: Contains the `DataModule` class that is used to load the data.
-  - `model.py`: Contains the `ModelFactory` class that is used to create the model.
+  - `datasets.py`: Contains the `DataModule` class that is used to load the data.
+  - `models.py`: Contains the `ModelFactory` class that is used to create the model.
   - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
 - `conf/`
   - `config.yaml`: The main config file for the project. It sets the default values for `dm` and `model`.
   - `hydra/`
-    - `launcher/`
-      - `slurm/`: Contains the SLURM launcher config files.
+    - `launcher/`: Contains the SLURM launcher config files.
+    - `sweeper/`: Contains the Optuna sweeper config files.
   - `dm/`: Contains the config files for the different datasets.
   - `model/`: Contains the config files for the different model architectures.
+  - `experiment/`: Contains the config files for specifying an entire experiment.

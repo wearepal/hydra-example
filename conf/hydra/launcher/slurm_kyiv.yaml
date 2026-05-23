@@ -1,5 +1,5 @@
 ---
-# usage: hydra/launcher=slurm/kyiv
+# usage: hydra/launcher=slurm_kyiv
 
 defaults:
   - submitit_slurm

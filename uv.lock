@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
 resolution-markers = [
     "sys_platform == 'linux'",
@@ -352,15 +352,14 @@ wheels = [
 
 [[package]]
 name = "hydra-core"
-version = "1.4.0.dev1"
+version = "1.4.0.dev10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "omegaconf" },
-    { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5a/05/01eac7f7e16d91933bfb802724847fd004952bff38a72fde51dc19a42af7/hydra_core-1.4.0.dev1.tar.gz", hash = "sha256:664e6755ea78f070b403df911fc460ea3464fdc59bd03affc0d6ffef9dd53221", size = 3287831, upload-time = "2024-07-10T20:09:41.548Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/4b/0a603db5d1e18585d3c926d1978134b8aaab88bf5ad704056f8bf098a49b/hydra_core-1.4.0.dev10.tar.gz", hash = "sha256:433345fc2d9ecea6e60bed9b5587e9799614a3711993dc41476f21efc7f4ee2d", size = 3329053, upload-time = "2026-09-14T17:32:46.492Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/d2/cf3b19412d1e8b397fd041500d1dccc5e902eb078bc91e3a7244452be9ff/hydra_core-1.4.0.dev1-py3-none-any.whl", hash = "sha256:e82753fe3aff8526ee1e72711f6f941beffcc9a2c1830b76c34242963835d039", size = 154173, upload-time = "2024-07-10T20:09:39.213Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/16/ff50de2771bdadf565dbbd5b985ed57417664c67e3ed1d02907db7d1e497/hydra_core-1.4.0.dev10-py3-none-any.whl", hash = "sha256:f129bd90459043f7f188ad5b4ea950a93c3bac4ef46280a71c6b412545bae8d7", size = 182113, upload-time = "2026-09-14T17:32:36.412Z" },
 ]
 
 [[package]]
@@ -379,10 +378,10 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "hydra-core", specifier = "==1.4.0.dev1" },
+    { name = "hydra-core", specifier = "==1.4.0.dev10" },
     { name = "hydra-optuna-sweeper", specifier = "~=1.2.0" },
     { name = "hydra-submitit-launcher", specifier = "~=1.2.0" },
-    { name = "omegaconf", specifier = "==2.4.0.dev11" },
+    { name = "omegaconf", specifier = "==2.4.0rc1" },
     { name = "ranzen", specifier = "~=2.5.1" },
     { name = "torch", specifier = "~=2.3.0" },
     { name = "wandb", specifier = "~=0.17.0" },
@@ -770,14 +769,14 @@ wheels = [
 
 [[package]]
 name = "omegaconf"
-version = "2.4.0.dev11"
+version = "2.4.0rc1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/99/f0/997e263fe486b17efeee4f34b327091bdadbd0707b5b90b49a01635fcfc9/omegaconf-2.4.0.dev11.tar.gz", hash = "sha256:5d65d011284160f58c734b75b33be03c7e4609f679d1bd49ce4cfe507c10ed8d", size = 3461978, upload-time = "2026-05-13T19:57:42.025Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/20/6c11937ebc91e9fe294e0982639503838b94c3c8f8af22f308a185b52bdb/omegaconf-2.4.0rc1.tar.gz", hash = "sha256:4efcff950adbf60e2aa15cf4ac102f6256751d528b42e0045465fc17e1837be8", size = 3513842, upload-time = "2026-09-28T19:11:36.2Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/bd/21b9bfa2fa29913df9f80c78b034b8c3bf8ecee04dac7b34bb546019f195/omegaconf-2.4.0.dev11-py3-none-any.whl", hash = "sha256:943b2a01329335fa11a4d3caed06432d7023f8fb579dcbff4d28b26ee6be469e", size = 233260, upload-time = "2026-05-13T19:57:39.309Z" },
+    { url = "https://files.pythonhosted.org/packages/24/e1/f284c22005982b418ae589df333ff33a20ff0a2d1ec0dd2daeb464b1918e/omegaconf-2.4.0rc1-py3-none-any.whl", hash = "sha256:a42547eccccdaa2c6aa392dfe1240ad604264f0caf9b72e913f4f081ced8910e", size = 254058, upload-time = "2026-09-28T19:11:33.405Z" },
 ]
 
 [[package]]

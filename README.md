@@ -92,7 +92,6 @@ wandb:
   name: null
   dir: ./local_logging
   id: null
-  anonymous: null
   project: hydra-example
   group: null
   entity: predictive-analytics-lab
@@ -165,7 +164,7 @@ python main.py dm=celeba dm.superclass=Smiling dm.subclass=Male
 
 (Once again, you can set `dm=celeba` and use `--help` to see the available options for the CelebA dataset.)
 
-But after a while, it gets tiring to always type this out. Instead, you can create a config file in the `conf/dm/` directory to store often-used datamodule configurations. For example, you can create a file `conf/dm/celeba_male_smiling.yaml` with the following content:
+But after a while, it gets tiring to always type this out. Instead, you can create a config file in the `configs/dm/` directory to store often-used datamodule configurations. For example, you can create a file `configs/dm/celeba_male_smiling.yaml` with the following content:
 ```yaml
 defaults:
   - celeba
@@ -186,7 +185,7 @@ You can still override any values on the command line, just as before:
 python main.py dm=celeba_male_smiling dm.superclass=Blond_Hair dm.default_res=64
 ```
 
-And you can create config files which inherit from other config files you created. For example, you can create a file `conf/dm/celeba_male_smiling_small.yaml` with the following content:
+And you can create config files which inherit from other config files you created. For example, you can create a file `configs/dm/celeba_male_smiling_small.yaml` with the following content:
 ```yaml
 defaults:
   - celeba_male_smiling
@@ -226,7 +225,7 @@ Sequential(
 )
 ```
 
-By default, Hydra simply runs the code with the different config values sequentially. But if you have access to a SLURM cluster, you can also run the jobs in parallel. To do this, we need to set `hydra/launcher=...` to the appropriate value. In this code base, there is a config file at `conf/hydra/launcher/slurm_kyiv.yaml` that has the correct settings for the Kyiv machine. To use it, we can run:
+By default, Hydra simply runs the code with the different config values sequentially. But if you have access to a SLURM cluster, you can also run the jobs in parallel. To do this, we need to set `hydra/launcher=...` to the appropriate value. In this code base, there is a config file at `configs/hydra/launcher/slurm_kyiv.yaml` that has the correct settings for the Kyiv machine. To use it, we can run:
 ```bash
 python main.py --multirun seed=42,43 hydra/launcher=slurm_kyiv
 ```
@@ -242,7 +241,7 @@ If you don't want to just blindly try out model parameters, you can also use Hyd
 
 In order to use any of these libraries, you need to return a value from the function decorated with `@hydra.main(...)` (located in `main.py`). The value should be a `float` and should represent the metric you want to optimize. For example, if you want to optimize the accuracy of the model, you can return the validation accuracy. If you want to minimize the loss, you can return the validation loss.
 
-To use Optuna, for example, create a config file in `conf/hydra/sweeper/`. The name doesn't matter, but we'll choose `fcn_params.yaml` and fill the content like this:
+To use Optuna, for example, create a config file in `configs/hydra/sweeper/`. The name doesn't matter, but we'll choose `fcn_params.yaml` and fill the content like this:
 ```yaml
 defaults:
   # Select here which hyperparameter optimization library to use.
@@ -271,13 +270,13 @@ Let's break down what's going on here:
 - Finally, we specify `params`, which is the heart of this config file. Here, we specify the parameters we want to optimize. For each parameter, we have to specify the search space. For example, `opt.lr: tag(log, interval(1.e-5, 1.e-3))` means that we want to optimize the `opt.lr` parameter and we want to search in the log space between `1.e-5` and `1.e-3`. The `model.num_hidden: range(1, 4)` we want to search in the range from 1 to 3 (inclusive). The `model.dropout_prob: choice(0.0, 0.1)` means that we want to choose between 0.0 and 0.1.
 
 ## Global experiment configs
-We already saw that you can create config files to, for example, save a common data module configuration – such a config file is then put in `conf/dm/`. However, such config files can only configure one subcomponent of the whole configuration. This means you might end up with long commands like this one:
+We already saw that you can create config files to, for example, save a common data module configuration – such a config file is then put in `configs/dm/`. However, such config files can only configure one subcomponent of the whole configuration. This means you might end up with long commands like this one:
 ```bash
 python main.py model=single_linear_layer model.activation=SELU dm=celeba_male_smiling_small dm.download=false gpu=0 seed=1 opt.lr=0.001 opt.weight_decay=0.001
 ```
 which you have to type over and over again.
 
-Luckily, we can define "experiment configs" in the `conf/experiment/` directory, that act as *global* configurations. For the above command, we can create a file at `conf/experiment/good_run.yaml` with the following content:
+Luckily, we can define "experiment configs" in the `configs/experiment/` directory, that act as *global* configurations. For the above command, we can create a file at `configs/experiment/good_run.yaml` with the following content:
 ```yaml
 # @package _global_
 ---
@@ -299,7 +298,7 @@ opt:
   weight_decay: 0.001
 ```
 
-Note that the comment `# @package _global_` is required. (The reason is that, by default, if you have a config file in the `conf/experiment/` directory, Hydra will want to associate this with the `experiment` entry in the main configuration – which doesn't exist! So, `@package _global_` tells Hydra to put the content of the file at the *top level* of the main config.)
+Note that the comment `# @package _global_` is required. (The reason is that, by default, if you have a config file in the `configs/experiment/` directory, Hydra will want to associate this with the `experiment` entry in the main configuration – which doesn't exist! So, `@package _global_` tells Hydra to put the content of the file at the *top level* of the main config.)
 
 And then we can run the code with these config values by running:
 ```bash
@@ -311,9 +310,9 @@ You can still override values:
 python main.py +experiment=good_run model.hidden_dim=20
 ```
 
-**Note**: It's very easy to fall into the trap of defining *everything* in these global experiment configs, but that leads to lots of duplication. Try to put as much configuration as possible into the component-specific config files (i.e., those in `conf/dm/` and `/conf/model` and so on), because those configs are very easy to reuse across different experiments.
+**Note**: It's very easy to fall into the trap of defining *everything* in these global experiment configs, but that leads to lots of duplication. Try to put as much configuration as possible into the component-specific config files (i.e., those in `configs/dm/` and `configs/model` and so on), because those configs are very easy to reuse across different experiments.
 
-As the experiment configs are global, the directory structure doesn't matter at all. You can put a file into `conf/experiment/cmnist/cnn.yaml` and call it with
+As the experiment configs are global, the directory structure doesn't matter at all. You can put a file into `configs/experiment/cmnist/cnn.yaml` and call it with
 ```bash
 python main.py +experiment=cmnist/cnn
 ```
@@ -359,8 +358,8 @@ class SimpleCNNFactory(ModelFactory):
   - `models.py`: Contains the `ModelFactory` class that is used to create the model.
   - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
-- `conf/`
-  - `config.yaml`: The main config file for the project. It sets the default values for `dm` and `model`.
+- `configs/`
+  - `base.yaml`: The base config file for the project. It sets the default values for `dm` and `model`.
   - `hydra/`
     - `launcher/`: Contains the SLURM launcher config files.
     - `sweeper/`: Contains the Optuna sweeper config files.

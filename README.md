@@ -326,7 +326,7 @@ This means you have a dataclass that contains all the configuration values for a
 
 For example, in this code base, we have the `ModelFactory` class in `src/model.py`:
 ```python
-@dataclass(eq=False)  # note that this should be a dataclass even though it has no fields
+@dataclass(eq=False)  # this needs to be a dataclass even though it has no fields
 class ModelFactory(ABC):
     """Interface for model factories."""
 

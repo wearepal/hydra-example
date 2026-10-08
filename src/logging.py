@@ -21,7 +21,6 @@ class WandbCfg:
     name: str | None = None
     dir: str = "./local_logging"
     id: str | None = None
-    anonymous: bool | None = None
     project: str = "hydra-example"
     group: str | None = None
     entity: str = "predictive-analytics-lab"

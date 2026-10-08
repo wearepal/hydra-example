@@ -8,7 +8,7 @@ dependencies = [
     "hydra-core==1.4.0.dev10",
     "ranzen~=2.5.1",
     "torch~=2.14.1",
-    "wandb~=0.17.0",
+    "wandb~=0.30.0",
     "hydra-submitit-launcher~=1.2.0",
     "hydra-optuna-sweeper~=1.2.0",
 ]

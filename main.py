@@ -8,10 +8,9 @@ from src.run import CONFIG_GROUPS, Config
 # Meaning of the parameters to @hydra.main():
 #     config_path: The path to the directory containing the yaml config files.
 #     config_name: The name of the config file without the ".yaml" extension.
-#     version_base: The version of hydra semantics to use. "1.3" is the latest version.
 
 
-@hydra.main(config_path="conf", config_name="config", version_base="1.3")
+@hydra.main(config_path="conf", config_name="config")
 def main(hydra_config: omegaconf.DictConfig) -> float:
     # The `hydra_config` object we get is essentially a dictionary.
     # We convert it to an object of the `Config` class using `OmegaConf.to_object()`.

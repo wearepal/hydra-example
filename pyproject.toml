@@ -15,12 +15,6 @@ dependencies = [
 readme = "README.md"
 requires-python = ">= 3.11"
 
-[tool.pyright]
-pythonVersion = "3.11"
-typeCheckingMode = "strict"
-venvPath = "."
-venv = ".venv"
-reportUnknownMemberType = "none"
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
 
@@ -28,6 +22,15 @@ torch = [{ index = "pytorch-cpu" }]
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
+
+[tool.ty.rules]
+disjoint-cast = "warn"
+possibly-missing-attribute = "warn"
+possibly-missing-import = "warn"
+possibly-unresolved-reference = "warn"
+truthiness-test-of-none-union = "warn"
+unsound-assignment = "warn"
+unsound-return-statement = "warn"
 
 [tool.ruff]
 line-length = 88

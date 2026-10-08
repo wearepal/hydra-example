@@ -7,10 +7,10 @@ from src.run import CONFIG_GROUPS, Config
 # This is the main entry point for the script.
 # Meaning of the parameters to @hydra.main():
 #     config_path: The path to the directory containing the yaml config files.
-#     config_name: The name of the config file without the ".yaml" extension.
+#     config_name: The name of the base config file without the ".yaml" extension.
 
 
-@hydra.main(config_path="conf", config_name="config")
+@hydra.main(config_path="configs", config_name="base")
 def main(hydra_config: omegaconf.DictConfig) -> float:
     # The `hydra_config` object we get is essentially a dictionary.
     # We convert it to an object of the `Config` class using `OmegaConf.to_object()`.

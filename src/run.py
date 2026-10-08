@@ -1,7 +1,7 @@
 """Main run function and config class."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Final
 
 import torch
 
@@ -15,7 +15,7 @@ __all__ = ["Config", "CONFIG_GROUPS"]
 # Config groups enable us to have different configurations for different subcomponents.
 # For example, one subcomponent is the data module, and the different data modules,
 # CelebA and ColoredMNIST, need different keys and values to be configured.
-CONFIG_GROUPS = {
+CONFIG_GROUPS: Final[dict[str, dict[str, type]]] = {
     "dm": {"celeba": CelebADataModule, "cmnist": ColoredMNISTDataModule},
     "model": {"fcn": FcnFactory, "cnn": SimpleCNNFactory},
 }

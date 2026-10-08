@@ -4,10 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Thomas M Kehrenberg", email = "tmke8@posteo.net" }]
 dependencies = [
-    "omegaconf==2.4.0.dev11",
-    "hydra-core==1.4.0.dev1",
+    "omegaconf==2.4.0.rc1",
+    "hydra-core==1.4.0.dev10",
     "ranzen~=2.5.1",
-    "torch~=2.3.0",
+    "torch~=2.14.1",
     "wandb~=0.17.0",
     "hydra-submitit-launcher~=1.2.0",
     "hydra-optuna-sweeper~=1.2.0",
@@ -15,12 +15,22 @@ dependencies = [
 readme = "README.md"
 requires-python = ">= 3.11"
 
-[tool.pyright]
-pythonVersion = "3.11"
-typeCheckingMode = "strict"
-venvPath = "."
-venv = ".venv"
-reportUnknownMemberType = "none"
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ty.rules]
+disjoint-cast = "warn"
+possibly-missing-attribute = "warn"
+possibly-missing-import = "warn"
+possibly-unresolved-reference = "warn"
+truthiness-test-of-none-union = "warn"
+unsound-assignment = "warn"
+unsound-return-statement = "warn"
 
 [tool.ruff]
 line-length = 88

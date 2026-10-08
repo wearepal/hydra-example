@@ -3,6 +3,7 @@
 defaults:
   - override /model: single_linear_layer
   - override /dm: celeba_male_smiling_small
+  - override /opt: weight_decay_adamw
 
 seed: 1
 gpu: 0

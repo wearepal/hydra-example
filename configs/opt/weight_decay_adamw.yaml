@@ -1,0 +1,4 @@
+---
+lr: 1.0e-3
+weight_decay: 1.e-2
+optimizer_cls: "torch.optim.AdamW"

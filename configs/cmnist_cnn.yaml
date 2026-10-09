@@ -1,0 +1,16 @@
+---
+defaults:
+  - main_config
+  - override dm: cmnist
+  - override model: cnn
+  - override opt: weight_decay_adamw
+
+dm:
+  num_colors: 10
+  val_prop: 0.2
+
+model:
+  kernel_size: 5
+
+opt:
+  lr: 3.e-3

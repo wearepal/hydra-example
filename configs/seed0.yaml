@@ -1,6 +1,0 @@
-defaults:
-  - main_config
-  # `_self_` is last by default, so the following line is not needed.
-  # - _self_
-
-seed: 0

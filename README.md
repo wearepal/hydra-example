@@ -352,6 +352,7 @@ class SimpleCNNFactory(ModelFactory):
 ## Structure of the code
 
 - `main.py`: The main entry point of the code. It sets up Hydra and then calls the main `run()` function.
+- `check_configs.py`: Checks that all config files in `configs/` are valid, without running any experiments.
 - `src/`
   - `run.py`: Contains the main `Config` class that is used to define valid config values. It also contains the `run()` function that is called by `main.py`.
   - `datasets.py`: Contains the `DataModule` class that is used to load the data.
@@ -359,6 +360,7 @@ class SimpleCNNFactory(ModelFactory):
   - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
 - `configs/`
+  - `seed0.yaml`: An alternative primary config, which sets the seed to 0. It mainly serves as a test case for `check_configs.py`, but it can also be used with `python main.py --config-name seed0`.
   - `hydra/`
     - `launcher/`: Contains the SLURM launcher config files.
     - `sweeper/`: Contains the Optuna sweeper config files.

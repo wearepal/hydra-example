@@ -1,4 +1,5 @@
 """Main run function and config class."""
+
 from dataclasses import dataclass, field
 from typing import Any, Final
 

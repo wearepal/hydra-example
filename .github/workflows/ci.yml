@@ -32,3 +32,16 @@ jobs:
       - name: Type check with ty
         run: |
           uvx ty check --output-format=github
+
+  check-configs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - name: Install dependencies
+        run: |
+          uv sync --locked
+      - name: Check that all config files are valid
+        run: |
+          uv run python check_configs.py

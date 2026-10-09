@@ -1,5 +1,4 @@
 """Main run function and config class."""
-
 from dataclasses import dataclass, field
 from typing import Any, Final
 
@@ -27,7 +26,7 @@ class Config:
 
     # The first two fields refer to configuration groups.
     # This is why we cannot specify a default for them here.
-    # The defaults can be specified in the main config yaml file (`conf/config.yaml`).
+    # The defaults can be specified in the main config yaml file (`configs/base.yaml`).
     dm: DataModule
     model: ModelFactory
 

@@ -51,13 +51,14 @@ It should look like this:
 <summary> Help output (quite long) </summary>
 
 ```
+main is powered by Hydra.
+
 == Configuration groups ==
 Compose your configuration from those groups (group=option)
 
 dm: celeba, celeba_male_blond, celeba_male_smiling, celeba_male_smiling_small, cmnist
-experiment: good_run
-experiment/cmnist: cnn
 model: cnn, fcn, single_linear_layer
+opt: weight_decay_adamw
 
 
 == Config ==
@@ -65,11 +66,7 @@ Override anything in the config (foo.bar=value)
 
 dm:
   root: !!python/object/apply:pathlib.PosixPath
-  - /
-  - srv
-  - galene0
-  - shared
-  - data
+  - /srv/galene0/shared/data
   default_res: 28
   label_map: null
   colors: null
@@ -153,7 +150,7 @@ python main.py model=cnn model.kernel_size=3 model.pool_stride=1 model.activatio
 ### W&B config
 To enable W&B logging, you can set the `wandb.mode` to "online" or "offline" (default is "disabled"):
 ```bash
-python main.py wandb.mode=online
+python main.py wandb.mode=offline
 ```
 
 ## Basics of config files
@@ -276,13 +273,13 @@ python main.py model=single_linear_layer model.activation=SELU dm=celeba_male_sm
 ```
 which you have to type over and over again.
 
-Luckily, we can define "experiment configs" in the `configs/experiment/` directory, that act as *global* configurations. For the above command, we can create a file at `configs/experiment/good_run.yaml` with the following content:
+Luckily, we can define a "primary config" in the top-level `configs/` directory, that act as *global* configurations. For the above command, we can create a file at `configs/good_run.yaml` with the following content:
 ```yaml
-# @package _global_
 ---
 defaults:
-  - override /model: single_linear_layer
-  - override /dm: celeba_male_smiling_small
+  - main_config
+  - override model: single_linear_layer
+  - override dm: celeba_male_smiling_small
 
 seed: 1
 gpu: 0
@@ -298,25 +295,21 @@ opt:
   weight_decay: 0.001
 ```
 
-Note that the comment `# @package _global_` is required. (The reason is that, by default, if you have a config file in the `configs/experiment/` directory, Hydra will want to associate this with the `experiment` entry in the main configuration – which doesn't exist! So, `@package _global_` tells Hydra to put the content of the file at the *top level* of the main config.)
+Note that we need to first inherit from `main_config` so that hydra knows which configuration fields are allowed. The name “main_config” is arbitrary but it needs to match the name that is passed to `register_hydra_config()` in `main.py`.
 
 And then we can run the code with these config values by running:
 ```bash
-python main.py +experiment=good_run
+python main.py --config-name good_run
 ```
+
+Instead of `--config-name` you can also use the shorthand `-cn`.
 
 You can still override values:
 ```bash
-python main.py +experiment=good_run model.hidden_dim=20
+python main.py -cn good_run model.final_bias=false
 ```
 
-**Note**: It's very easy to fall into the trap of defining *everything* in these global experiment configs, but that leads to lots of duplication. Try to put as much configuration as possible into the component-specific config files (i.e., those in `configs/dm/` and `configs/model` and so on), because those configs are very easy to reuse across different experiments.
-
-As the experiment configs are global, the directory structure doesn't matter at all. You can put a file into `configs/experiment/cmnist/cnn.yaml` and call it with
-```bash
-python main.py +experiment=cmnist/cnn
-```
-and it will work fine.
+**Note**: It's very easy to fall into the trap of defining *everything* in these global configs, but that leads to lots of duplication. Try to put as much configuration as possible into the component-specific config files (i.e., those in `configs/dm/` and `configs/model` and so on), because those configs are easy to reuse across different experiments.
 
 ## How to make your code easily configurable with Hydra
 What we found is the best method to structure your code to make it easy to configure with Hydra is the "builder" or "factory" pattern.
@@ -324,6 +317,7 @@ What we found is the best method to structure your code to make it easy to confi
 This means you have a dataclass that contains all the configuration values for a particular component of your code (e.g. the model, the data, the optimiser, etc.). And then this class has a `build()` or `init()` method that takes additional arguments which are only available at runtime (e.g. the input size of the model, the number of classes in the dataset, etc.), and then instantiates the component.
 
 For example, in this code base, we have the `ModelFactory` class in `src/model.py`:
+
 ```python
 @dataclass(eq=False)  # this needs to be a dataclass even though it has no fields
 class ModelFactory(ABC):
@@ -333,7 +327,9 @@ class ModelFactory(ABC):
     def build(self, in_dim: int, *, out_dim: int) -> nn.Module:
         raise NotImplementedError()
 ```
+
 And when you add a model to the code base, you subclass `ModelFactory` and implement the `build()` method:
+
 ```python
 @dataclass(eq=False, kw_only=True)
 class SimpleCNNFactory(ModelFactory):
@@ -360,11 +356,10 @@ class SimpleCNNFactory(ModelFactory):
   - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
 - `configs/`
-  - `seed0.yaml`: An alternative primary config, which sets the seed to 0. It mainly serves as a test case for `check_configs.py`, but it can also be used with `python main.py --config-name seed0`.
+  - `good_run.yaml`: An alternative primary config.
   - `hydra/`
     - `launcher/`: Contains the SLURM launcher config files.
     - `sweeper/`: Contains the Optuna sweeper config files.
   - `dm/`: Contains the config files for the different datasets.
   - `model/`: Contains the config files for the different model architectures.
   - `opt/`: Contains the config files for the optimiser.
-  - `experiment/`: Contains the config files for specifying an entire experiment.

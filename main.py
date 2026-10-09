@@ -7,10 +7,12 @@ from src.run import CONFIG_GROUPS, Config
 # This is the main entry point for the script.
 # Meaning of the parameters to @hydra.main():
 #     config_path: The path to the directory containing the yaml config files.
-#     config_name: The name of the base config file without the ".yaml" extension.
+#     config_name: The name of the primary config. This can be a yaml file in
+#         `config_path` (without the ".yaml" extension), but here it's the `Config`
+#         class, which we register under the name "main_config" below.
 
 
-@hydra.main(config_path="configs", config_name="base")
+@hydra.main(config_path="configs", config_name="main_config")
 def main(hydra_config: omegaconf.DictConfig) -> float:
     # The `hydra_config` object we get is essentially a dictionary.
     # We convert it to an object of the `Config` class using `OmegaConf.to_object()`.
@@ -31,7 +33,7 @@ if __name__ == "__main__":
     # Before calling the main function, we need to register the main `Config` class and
     # the configuration groups. Without this, hydra doesn't know which keys and values
     # are valid in the configuration.
-    # Whatever you set here as `schema_name` will need to be incluced as the first entry
-    # in the `defaults` list in the main config yaml file (`configs/base.yaml`).
-    register_hydra_config(Config, CONFIG_GROUPS, schema_name="config_schema")
+    # Whatever you set here as `schema_name` has to match the `config_name` passed to
+    # `@hydra.main()` above.
+    register_hydra_config(Config, CONFIG_GROUPS, schema_name="main_config")
     main()

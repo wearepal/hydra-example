@@ -24,9 +24,31 @@ CONFIG_GROUPS: Final[dict[str, dict[str, type]]] = {
 class Config:
     """Main configuration class for the code base."""
 
+    # Hydra's defaults list. It is not a real config field: Hydra removes it from the
+    # composed config, but `OmegaConf.to_object()` then fills it in again from
+    # `default_factory`, so the instantiated `Config` still holds this list. (It has to
+    # be a dataclass field; Hydra doesn't see a `ClassVar`.)
+    defaults: list[Any] = field(
+        default_factory=lambda: [
+            # `_self_` (this class) has to come first. Otherwise Hydra merges this class
+            # last, and the abstract types of `dm` and `model` overwrite the types of
+            # the selected config group options.
+            "_self_",
+            # Then we choose defaults for the config groups.
+            # The keys and values are those of the config groups defined in
+            # `CONFIG_GROUPS` above.
+            {"dm": "cmnist"},
+            {"model": "fcn"},
+            # For subconfigs that aren't config groups, we can just set `None` here and
+            # hydra then uses the default values from the dataclass. This makes it
+            # possible to write `opt=...` on the command line instead of `+opt=...`.
+            {"opt": None},
+        ]
+    )
+
     # The first two fields refer to configuration groups.
-    # This is why we cannot specify a default for them here.
-    # The defaults can be specified in the main config yaml file (`configs/base.yaml`).
+    # This is why hydra doesn't let us specify a default for them here.
+    # The defaults are instead specified in the `defaults` list above.
     dm: DataModule
     model: ModelFactory
 

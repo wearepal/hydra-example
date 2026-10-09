@@ -359,10 +359,10 @@ class SimpleCNNFactory(ModelFactory):
   - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
 - `configs/`
-  - `base.yaml`: The base config file for the project. It sets the default values for `dm` and `model`.
   - `hydra/`
     - `launcher/`: Contains the SLURM launcher config files.
     - `sweeper/`: Contains the Optuna sweeper config files.
   - `dm/`: Contains the config files for the different datasets.
   - `model/`: Contains the config files for the different model architectures.
+  - `opt/`: Contains the config files for the optimiser.
   - `experiment/`: Contains the config files for specifying an entire experiment.

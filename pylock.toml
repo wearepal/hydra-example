@@ -279,10 +279,10 @@ wheels = [
 
 [[packages]]
 name = "hydra-core"
-version = "1.4.0.dev10"
+version = "1.4.0rc1"
 index = "https://pypi.org/simple"
-sdist = { url = "https://files.pythonhosted.org/packages/4d/4b/0a603db5d1e18585d3c926d1978134b8aaab88bf5ad704056f8bf098a49b/hydra_core-1.4.0.dev10.tar.gz", upload-time = 2026-09-14T17:32:46Z, size = 3329053, hashes = { sha256 = "433345fc2d9ecea6e60bed9b5587e9799614a3711993dc41476f21efc7f4ee2d" } }
-wheels = [{ url = "https://files.pythonhosted.org/packages/1f/16/ff50de2771bdadf565dbbd5b985ed57417664c67e3ed1d02907db7d1e497/hydra_core-1.4.0.dev10-py3-none-any.whl", upload-time = 2026-09-14T17:32:36Z, size = 182113, hashes = { sha256 = "f129bd90459043f7f188ad5b4ea950a93c3bac4ef46280a71c6b412545bae8d7" } }]
+sdist = { url = "https://files.pythonhosted.org/packages/eb/44/f2aa54343593132838e9f72992fcef627d168a6b2a4a7f4e4bca3e0ad96f/hydra_core-1.4.0rc1.tar.gz", upload-time = 2026-10-10T07:46:48Z, size = 3373272, hashes = { sha256 = "a00aa0b9ba4ce3f012fdda5b600b535c1a40bc8b6c894de4b1c4fb3d5b2fedf8" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/3f/e6/37ca8e464e6786103edbd87d7f964bbbd8dd666254ff3dbf3106f1344efa/hydra_core-1.4.0rc1-py3-none-any.whl", upload-time = 2026-10-10T07:46:37Z, size = 196222, hashes = { sha256 = "0c158b4b3b3daa07a10a1e144f28e13cbbdfe054b174621ad108e3c53a54d312" } }]
 
 [[packages]]
 name = "hydra-optuna-sweeper"
@@ -290,6 +290,13 @@ version = "1.2.0"
 index = "https://pypi.org/simple"
 sdist = { url = "https://files.pythonhosted.org/packages/38/64/018134a44a124f56e27245dd8154900a6adafb1459a38ddea0f81e22f8d7/hydra-optuna-sweeper-1.2.0.tar.gz", upload-time = 2022-05-17T22:19:24Z, size = 7914, hashes = { sha256 = "f20b56dfdc4db9f84f3b502c8e60a5269967197c4df4c28653cf17f71b2136ce" } }
 wheels = [{ url = "https://files.pythonhosted.org/packages/b3/25/1eccad47c39da342988fe501b174652c37676ab539baeae9a73444932d13/hydra_optuna_sweeper-1.2.0-py3-none-any.whl", upload-time = 2022-05-17T22:19:21Z, size = 8486, hashes = { sha256 = "b012d94c1dc86edfc33dcf3c7f10e9d2ca6b27040dccb7fdccbb8888b1cd6eef" } }]
+
+[[packages]]
+name = "hydra-qol"
+version = "0.1.0"
+index = "https://pypi.org/simple"
+sdist = { url = "https://files.pythonhosted.org/packages/55/c1/27ea6396f342079db047237dbadd8e3c8a7380055c8ab37e33f3d061e254/hydra_qol-0.1.0.tar.gz", upload-time = 2026-10-13T12:31:17Z, size = 14293, hashes = { sha256 = "e30fd05d90ed14f83e3917e05bbb3460f2f5a7cadf51c1e44a407116c7dcee9e" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/41/ce/e56beaa0956ba376f208bc25e9caa4b3ca6162d04fd67d48029b21e3b8f8/hydra_qol-0.1.0-py3-none-any.whl", upload-time = 2026-10-13T12:31:16Z, size = 15054, hashes = { sha256 = "7aa053202f60a9b6c6d2056a15ad39ab7ea66c76bfbc943f27a164ec9bea0f0f" } }]
 
 [[packages]]
 name = "hydra-submitit-launcher"
@@ -502,10 +509,10 @@ wheels = [
 
 [[packages]]
 name = "omegaconf"
-version = "2.4.0rc1"
+version = "2.4.0"
 index = "https://pypi.org/simple"
-sdist = { url = "https://files.pythonhosted.org/packages/52/20/6c11937ebc91e9fe294e0982639503838b94c3c8f8af22f308a185b52bdb/omegaconf-2.4.0rc1.tar.gz", upload-time = 2026-09-28T19:11:36Z, size = 3513842, hashes = { sha256 = "4efcff950adbf60e2aa15cf4ac102f6256751d528b42e0045465fc17e1837be8" } }
-wheels = [{ url = "https://files.pythonhosted.org/packages/24/e1/f284c22005982b418ae589df333ff33a20ff0a2d1ec0dd2daeb464b1918e/omegaconf-2.4.0rc1-py3-none-any.whl", upload-time = 2026-09-28T19:11:33Z, size = 254058, hashes = { sha256 = "a42547eccccdaa2c6aa392dfe1240ad604264f0caf9b72e913f4f081ced8910e" } }]
+sdist = { url = "https://files.pythonhosted.org/packages/cc/10/1cabf3188a4d9684a06568c7fd76f9536eede625733c8399cf1f5337b83e/omegaconf-2.4.0.tar.gz", upload-time = 2026-10-09T12:44:02Z, size = 3544508, hashes = { sha256 = "7e219a70bea371da250285b9c01c7db027bc421722799c2cc4ff14bc4a2a753b" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/4f/bd/0d9f8247b0819385213d09564eda5c52d3673313c2414d51f72883ec24cd/omegaconf-2.4.0-py3-none-any.whl", upload-time = 2026-10-09T12:43:59Z, size = 254152, hashes = { sha256 = "f141a664c777582405e3cc6e0545ecc79429e79f844995b1a6e71c35946a025c" } }]
 
 [[packages]]
 name = "opentelemetry-api"
@@ -788,13 +795,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/f0/7a/1c7270340330e575b92f397352af856a8c06f230aa3e76f86b39d01b416a/pyyaml-6.0.3-cp314-cp314t-win_amd64.whl", upload-time = 2025-09-25T21:32:55Z, size = 174062, hashes = { sha256 = "4ad1906908f2f5ae4e5a8ddfce73c320c2a1429ec52eafd27138b7f1cbe341c9" } },
     { url = "https://files.pythonhosted.org/packages/f1/12/de94a39c2ef588c7e6455cfbe7343d3b2dc9d6b6b2f40c4c6565744c873d/pyyaml-6.0.3-cp314-cp314t-win_arm64.whl", upload-time = 2025-09-25T21:32:56Z, size = 149341, hashes = { sha256 = "ebc55a14a21cb14062aa4162f906cd962b28e2e9ea38f9b4391244cd8de4ae0b" } },
 ]
-
-[[packages]]
-name = "ranzen"
-version = "2.5.2"
-index = "https://pypi.org/simple"
-sdist = { url = "https://files.pythonhosted.org/packages/e7/1f/f3f4ae74c3426d540587664120fc7e0bc5aebf4a4fa6a3953d71baf516ff/ranzen-2.5.2.tar.gz", upload-time = 2024-09-19T15:20:32Z, size = 47841, hashes = { sha256 = "cd2fda5dbc7f80b2cdb109f98fa6357787324f89d51aec035ac4e7c06dc12f8d" } }
-wheels = [{ url = "https://files.pythonhosted.org/packages/66/13/bafe01f537bfc91d477f7cddf567052a1bfc740e5ce7914a81b5446c3930/ranzen-2.5.2-py3-none-any.whl", upload-time = 2024-09-19T15:20:30Z, size = 56851, hashes = { sha256 = "fbea732b5ab5c44f9a5e1c9aac2d0c8112fee44af15c802626a643e573ea6b89" } }]
 
 [[packages]]
 name = "requests"

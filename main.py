@@ -1,6 +1,6 @@
 import hydra
+from hydra_qol import prepare_for_logging, register_hydra_config
 import omegaconf
-from ranzen.hydra import prepare_for_logging, reconstruct_cmd, register_hydra_config
 
 from src.run import CONFIG_GROUPS, Config
 
@@ -22,8 +22,6 @@ def main(hydra_config: omegaconf.DictConfig) -> float:
     # `prepare_for_logging` takes a hydra config dict and makes it prettier for logging.
     # Things this function does: turn enums to strings, resolve any references, etc.
     config_for_logging = prepare_for_logging(hydra_config)
-    # We add the command that was used to start the program to the config.
-    config_for_logging["cmd"] = reconstruct_cmd()
 
     # Finally, we call the `run` method of the `Config` object.
     return config.run(config_for_logging)

@@ -22,8 +22,7 @@ if __name__ == "__main__":
         check_configs(
             main_cls=Config,
             groups=CONFIG_GROUPS,
-            # Has to match both `schema_name` and `config_name` in `main.py`.
-            config_name="main_config",
+            config_name="base_config",
             config_dir=Path(__file__).parent / "configs",
         )
     )

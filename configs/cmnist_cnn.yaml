@@ -1,9 +1,9 @@
 ---
 defaults:
-  - main_config
-  - override dm: cmnist
-  - override model: cnn
-  - override opt: weight_decay_adamw
+  - base_config
+  - dm: cmnist
+  - model: cnn
+  - opt: weight_decay_adamw
 
 dm:
   num_colors: 10

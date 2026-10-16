@@ -344,6 +344,20 @@ class SimpleCNNFactory(ModelFactory):
         # (implementation of the model)
 ```
 
+## Using the current date in config values
+Hydra comes with a built-in `now` resolver which formats the current date and time with a [`strftime`](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes) pattern. This is useful, for example, for grouping W&B runs by the day they were started:
+```bash
+python main.py 'wandb.group=${now:%Y-%m-%d}-cnn-dropout'
+```
+This sets `wandb.group` to something like `2026-10-16-cnn-dropout`. Note the single quotes: without them, the shell would try to expand `${now:...}` itself.
+
+You can use any `strftime` pattern, e.g. `${now:%Y-%m-%d_%H-%M}` to also include the time. The resolver also works in config files:
+```yaml
+wandb:
+  group: ${now:%Y-%m-%d}-cnn-dropout
+```
+
+**Note**: within a single run, the value is cached, so it doesn't change. But in a multirun, each job resolves it separately, so if your sweep runs past midnight, the later jobs will get the next day's date.
 
 ## Structure of the code
 

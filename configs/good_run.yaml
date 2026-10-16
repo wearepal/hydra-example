@@ -4,7 +4,6 @@ defaults:
   - base_config
   - model: single_linear_layer
   - dm: celeba_male_smiling_small
-  - opt: null
 
 seed: 1
 gpu: 0

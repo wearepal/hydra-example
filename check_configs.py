@@ -22,7 +22,11 @@ if __name__ == "__main__":
         check_configs(
             main_cls=Config,
             groups=CONFIG_GROUPS,
-            config_name="base_config",
+            # The same `schema_name` as in `register_hydra_config()` in `main.py`.
+            schema_name="base_config",
             config_dir=Path(__file__).parent / "configs",
+            # A primary config that selects a default for every config group; here,
+            # the same as `config_name` in `@hydra.main()`.
+            config_with_defaults="default_config",
         )
     )

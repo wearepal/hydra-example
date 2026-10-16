@@ -1,10 +1,9 @@
 ---
 defaults:
-  - main_config
-  - override model: single_linear_layer
-  - override dm: celeba_male_smiling_small
-  # `_self_` is last by default, so the following line is not needed.
-  # - _self_
+  # We again inherit from the schema that was defined by `register_hydra_config`.
+  - base_config
+  - model: single_linear_layer
+  - dm: celeba_male_smiling_small
 
 seed: 1
 gpu: 0

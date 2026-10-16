@@ -368,7 +368,7 @@ dependencies = [
 requires-dist = [
     { name = "hydra-core", specifier = "~=1.4.0rc1" },
     { name = "hydra-optuna-sweeper", specifier = "~=1.2.0" },
-    { name = "hydra-qol", specifier = "~=0.1.0" },
+    { name = "hydra-qol", specifier = "~=0.2.0" },
     { name = "hydra-submitit-launcher", specifier = "~=1.2.0" },
     { name = "omegaconf", specifier = "~=2.4.0" },
     { name = "torch", specifier = "~=2.14.1", index = "https://download.pytorch.org/whl/cpu" },
@@ -390,15 +390,15 @@ wheels = [
 
 [[package]]
 name = "hydra-qol"
-version = "0.1.0"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "hydra-core" },
     { name = "omegaconf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/55/c1/27ea6396f342079db047237dbadd8e3c8a7380055c8ab37e33f3d061e254/hydra_qol-0.1.0.tar.gz", hash = "sha256:e30fd05d90ed14f83e3917e05bbb3460f2f5a7cadf51c1e44a407116c7dcee9e", size = 14293, upload-time = "2026-10-13T12:31:17.729Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f7/a1/33fd48bef9e8bf483ad04a7c42062a2f768fea52922f169e765062cb77a0/hydra_qol-0.2.0.tar.gz", hash = "sha256:cee2b3ede9d6360cf74e59f972368710ab1cfaebe59b5811939f1e77c6b1fd5a", size = 14692, upload-time = "2026-10-16T14:21:09.004Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/41/ce/e56beaa0956ba376f208bc25e9caa4b3ca6162d04fd67d48029b21e3b8f8/hydra_qol-0.1.0-py3-none-any.whl", hash = "sha256:7aa053202f60a9b6c6d2056a15ad39ab7ea66c76bfbc943f27a164ec9bea0f0f", size = 15054, upload-time = "2026-10-13T12:31:16.636Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/3c/b7885a9cea2de28a9e276bea0561ff80285cf460a11f5d037ceb93b55a83/hydra_qol-0.2.0-py3-none-any.whl", hash = "sha256:4536c51d450973613c1db29f79587dadb24eff7d994a031427c6a64028362ac5", size = 15490, upload-time = "2026-10-16T14:21:07.852Z" },
 ]
 
 [[package]]

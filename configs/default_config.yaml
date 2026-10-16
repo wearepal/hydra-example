@@ -1,0 +1,14 @@
+---
+# The `defaults` list allows us to inherit from other configs.
+defaults:
+  # The first entry is the schema name we have passed to `register_hydra_config`.
+  # This ensures that our config values are validated against the `Config` class.
+  - base_config
+  # Next, we choose for each group which registered config we want to select.
+  # The keys and values here are those we defined in `CONFIG_GROUPS` in `src/run.py`.
+  - dm: cmnist
+  - model: fcn
+  # For subconfigs that aren't config groups, we can just set `null` here and hydra
+  # then uses the default values from the dataclass. This makes it possible to write
+  # `opt=...` on the command line instead of `+opt=...`.
+  - opt: null

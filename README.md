@@ -277,9 +277,9 @@ Luckily, we can define a "primary config" in the top-level `configs/` directory,
 ```yaml
 ---
 defaults:
-  - main_config
-  - override model: single_linear_layer
-  - override dm: celeba_male_smiling_small
+  - base_config
+  - model: single_linear_layer
+  - dm: celeba_male_smiling_small
 
 seed: 1
 gpu: 0
@@ -295,7 +295,7 @@ opt:
   weight_decay: 0.001
 ```
 
-Note that we need to first inherit from `main_config` so that hydra knows which configuration fields are allowed. The name “main_config” is arbitrary but it needs to match the name that is passed to `register_hydra_config()` in `main.py`.
+Note that we need to first inherit from `base_config` so that hydra knows which configuration fields are allowed. The name “base_config” is arbitrary but it needs to match the name that is passed to `register_hydra_config()` in `main.py`.
 
 And then we can run the code with these config values by running:
 ```bash
@@ -356,6 +356,7 @@ class SimpleCNNFactory(ModelFactory):
   - `optimisation.py`: Contains the `OptimisationCfg` class that is used to build the optimiser that trains the model.
   - `logging.py`: Contains the `WandbCfg` class that is used to set up Weights & Biases logging.
 - `configs/`
+  - `default_config.yaml`: The default primary config file for the project. It sets the default values for `dm` and `model`.
   - `good_run.yaml`: An alternative primary config.
   - `hydra/`
     - `launcher/`: Contains the SLURM launcher config files.

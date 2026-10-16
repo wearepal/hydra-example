@@ -362,7 +362,6 @@ wandb:
 ## Structure of the code
 
 - `main.py`: The main entry point of the code. It sets up Hydra and then calls the main `run()` function.
-- `check_configs.py`: Checks that all config files in `configs/` are valid, without running any experiments.
 - `src/`
   - `run.py`: Contains the main `Config` class that is used to define valid config values. It also contains the `run()` function that is called by `main.py`.
   - `datasets.py`: Contains the `DataModule` class that is used to load the data.
@@ -378,3 +377,4 @@ wandb:
   - `dm/`: Contains the config files for the different datasets.
   - `model/`: Contains the config files for the different model architectures.
   - `opt/`: Contains the config files for the optimiser.
+- `tests/test_configs.py`: Checks that all config files in `configs/` are valid, without running any experiments (run with `pytest`).

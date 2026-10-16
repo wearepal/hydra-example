@@ -293,10 +293,10 @@ wheels = [{ url = "https://files.pythonhosted.org/packages/b3/25/1eccad47c39da34
 
 [[packages]]
 name = "hydra-qol"
-version = "0.1.0"
+version = "0.2.0"
 index = "https://pypi.org/simple"
-sdist = { url = "https://files.pythonhosted.org/packages/55/c1/27ea6396f342079db047237dbadd8e3c8a7380055c8ab37e33f3d061e254/hydra_qol-0.1.0.tar.gz", upload-time = 2026-10-13T12:31:17Z, size = 14293, hashes = { sha256 = "e30fd05d90ed14f83e3917e05bbb3460f2f5a7cadf51c1e44a407116c7dcee9e" } }
-wheels = [{ url = "https://files.pythonhosted.org/packages/41/ce/e56beaa0956ba376f208bc25e9caa4b3ca6162d04fd67d48029b21e3b8f8/hydra_qol-0.1.0-py3-none-any.whl", upload-time = 2026-10-13T12:31:16Z, size = 15054, hashes = { sha256 = "7aa053202f60a9b6c6d2056a15ad39ab7ea66c76bfbc943f27a164ec9bea0f0f" } }]
+sdist = { url = "https://files.pythonhosted.org/packages/f7/a1/33fd48bef9e8bf483ad04a7c42062a2f768fea52922f169e765062cb77a0/hydra_qol-0.2.0.tar.gz", upload-time = 2026-10-16T14:21:09Z, size = 14692, hashes = { sha256 = "cee2b3ede9d6360cf74e59f972368710ab1cfaebe59b5811939f1e77c6b1fd5a" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/7f/3c/b7885a9cea2de28a9e276bea0561ff80285cf460a11f5d037ceb93b55a83/hydra_qol-0.2.0-py3-none-any.whl", upload-time = 2026-10-16T14:21:07Z, size = 15490, hashes = { sha256 = "4536c51d450973613c1db29f79587dadb24eff7d994a031427c6a64028362ac5" } }]
 
 [[packages]]
 name = "hydra-submitit-launcher"
@@ -311,6 +311,13 @@ version = "3.16"
 index = "https://pypi.org/simple"
 sdist = { url = "https://files.pythonhosted.org/packages/1a/88/bcf9709822fe69d02c2a6a77956c98ce6ea8ca8767a9aadcedc7eb6a2390/idna-3.16.tar.gz", upload-time = 2026-05-22T00:16:18Z, size = 203770, hashes = { sha256 = "d7a6da03db833450fca25d2358ac9ff06cd624577a4aea3a596d5c0f77b8e03d" } }
 wheels = [{ url = "https://files.pythonhosted.org/packages/94/16/70255075a9859a0e3adb789b68ceb0e210dec03934245fd98d248226572f/idna-3.16-py3-none-any.whl", upload-time = 2026-05-22T00:16:16Z, size = 74165, hashes = { sha256 = "cc246e3a3f89580c3a951b5ad298ca4638078b2cdd4f115654332b5c26daded5" } }]
+
+[[packages]]
+name = "iniconfig"
+version = "2.3.1"
+index = "https://pypi.org/simple"
+sdist = { url = "https://files.pythonhosted.org/packages/01/e1/2069291243c926a2ff1cd706c7f3eeb9b62144bf60f77c9fb9ff2fb26bd3/iniconfig-2.3.1.tar.gz", upload-time = 2026-10-06T22:48:38Z, size = 21209, hashes = { sha256 = "67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl", upload-time = 2026-10-06T22:48:36Z, size = 7552, hashes = { sha256 = "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7" } }]
 
 [[packages]]
 name = "jinja2"
@@ -592,6 +599,13 @@ sdist = { url = "https://files.pythonhosted.org/packages/9f/4a/0883b8e3802965322
 wheels = [{ url = "https://files.pythonhosted.org/packages/75/a6/a0a304dc33b49145b21f4808d763822111e67d1c3a32b524a1baf947b6e1/platformdirs-4.9.6-py3-none-any.whl", upload-time = 2026-04-09T00:04:09Z, size = 21348, hashes = { sha256 = "e61adb1d5e5cb3441b4b7710bea7e4c12250ca49439228cc1021c00dcfac0917" } }]
 
 [[packages]]
+name = "pluggy"
+version = "1.7.0"
+index = "https://pypi.org/simple"
+sdist = { url = "https://files.pythonhosted.org/packages/bf/db/7fc19e6f2dc92a966727031389fc2e08b558f0f25eb7403c1119ad4713cd/pluggy-1.7.0.tar.gz", upload-time = 2026-10-15T09:50:58Z, size = 123304, hashes = { sha256 = "d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/40/9e/2b38731e0fc536806f16490e1a12d7f0dc2a1235aa8cc07bcc75416a7daa/pluggy-1.7.0-py3-none-any.whl", upload-time = 2026-10-15T09:50:56Z, size = 27082, hashes = { sha256 = "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec" } }]
+
+[[packages]]
 name = "prettytable"
 version = "3.17.0"
 index = "https://pypi.org/simple"
@@ -740,6 +754,13 @@ marker = "sys_platform == 'win32'"
 index = "https://pypi.org/simple"
 sdist = { url = "https://files.pythonhosted.org/packages/b6/6d/f94028646d7bbe6d9d873c47ee7c246f2d29129d253f0d96cb6fcab70733/pyreadline3-3.5.6.tar.gz", upload-time = 2026-05-14T17:55:04Z, size = 100368, hashes = { sha256 = "61e53218b99656091ddb077df9e71f25850e72e030b6183b39c9b7e6e4f4a9bf" } }
 wheels = [{ url = "https://files.pythonhosted.org/packages/f7/5e/35c856e186b74678c24927847ad9895a51f1bc02a0c6126477a6c6040064/pyreadline3-3.5.6-py3-none-any.whl", upload-time = 2026-05-14T17:55:03Z, size = 85243, hashes = { sha256 = "8449b734232e42a5dcd74048e39b60db2839a4c38cf3ae2bf7707d58b5389c0d" } }]
+
+[[packages]]
+name = "pytest"
+version = "9.1.1"
+index = "https://pypi.org/simple"
+sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", upload-time = 2026-06-19T10:58:32Z, size = 1636369, hashes = { sha256 = "1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", upload-time = 2026-06-19T10:58:31Z, size = 386536, hashes = { sha256 = "37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c" } }]
 
 [[packages]]
 name = "pyyaml"

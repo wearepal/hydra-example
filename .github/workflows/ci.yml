@@ -44,4 +44,4 @@ jobs:
           uv sync --locked
       - name: Check that all config files are valid
         run: |
-          uv run python check_configs.py
+          uv run pytest

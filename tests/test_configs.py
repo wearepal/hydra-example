@@ -10,9 +10,10 @@ Usage:
     pytest
 """
 
+from collections.abc import Iterator
 from pathlib import Path
 
-from hydra_qol import CheckResult, validate_configs
+from hydra_qol import ValidationContext, setup_validation, validate_config
 import pytest
 
 from src.run import CONFIG_GROUPS, Config
@@ -21,9 +22,9 @@ CONFIG_DIR = Path(__file__).parent.parent / "configs"
 
 
 @pytest.fixture(scope="module")
-def results() -> dict[Path, CheckResult]:
-    # All files are checked in one go, because Hydra has to be initialized only once.
-    results = validate_configs(
+def context() -> Iterator[ValidationContext]:
+    # Hydra is initialized only once and then used for all config files.
+    with setup_validation(
         main_cls=Config,
         groups=CONFIG_GROUPS,
         # The same `schema_name` as in `register_hydra_config()` in `main.py`.
@@ -32,8 +33,8 @@ def results() -> dict[Path, CheckResult]:
         # A primary config that selects a default for every config group; here,
         # the same as `config_name` in `@hydra.main()`.
         config_with_defaults="default_config",
-    )
-    return {result.path: result for result in results}
+    ) as context:
+        yield context
 
 
 # One test case per config file, so that every broken file is reported separately.
@@ -42,7 +43,7 @@ def results() -> dict[Path, CheckResult]:
     sorted(path.relative_to(CONFIG_DIR) for path in CONFIG_DIR.rglob("*.y*ml")),
     ids=Path.as_posix,
 )
-def test_config(path: Path, results: dict[Path, CheckResult]) -> None:
-    result = results[path]
+def test_config(path: Path, context: ValidationContext) -> None:
+    result = validate_config(path, context)
     if result.error is not None:
         raise result.error

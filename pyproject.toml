@@ -13,7 +13,7 @@ dependencies = [
     "hydra-optuna-sweeper~=1.2.0",
 ]
 readme = "README.md"
-requires-python = ">= 3.11"
+requires-python = ">= 3.12"
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
@@ -34,7 +34,7 @@ unsound-return-statement = "warn"
 
 [tool.ruff]
 line-length = 88
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.format]
 quote-style = "preserve"

@@ -23,7 +23,7 @@ python main.py
 
 The output should be something like this:
 ```
-Starting a run with seed 42 and GPU 0.
+Starting a run with seed 42 on CPU.
 Model architecture:
 Sequential(
   (0): Sequential(
@@ -35,9 +35,9 @@ Sequential(
 )
 ```
 
-We can set the seed and the GPU manually with the `seed` and `gpu` arguments:
+We can, for example, set the seed with:
 ```bash
-python main.py seed=123 gpu=1
+python main.py seed=123
 ```
 
 To find out which arguments are available, run:
@@ -75,7 +75,7 @@ dm:
 model:
   num_hidden: 1
   hidden_dim: null
-  activation: GELU
+  activation: gelu
   norm: LN
   dropout_prob: 0.0
   final_bias: true
@@ -97,7 +97,7 @@ wandb:
   mode: disabled
   resume: null
 seed: 42
-gpu: 0
+gpu: -1
 ```
 
 </details>
@@ -140,11 +140,11 @@ Now the "model" part of the output should look like this:
 model:
   kernel_size: 5
   pool_stride: 2
-  activation: RELU
+  activation: relu
 ```
 This tells us that we can set the `kernel_size`, `pool_stride`, and `activation` values for the "cnn" architecture. For example:
 ```bash
-python main.py model=cnn model.kernel_size=3 model.pool_stride=1 model.activation=SELU
+python main.py model=cnn model.kernel_size=3 model.pool_stride=1 model.activation=selu
 ```
 
 ### W&B config
@@ -199,7 +199,7 @@ The output should look like this:
 ```
 [2024-05-16 18:40:47,580][HYDRA] Launching 2 jobs locally
 [2024-05-16 18:40:47,581][HYDRA]        #0 : seed=42
-Starting a run with seed 42 and GPU 0.
+Starting a run with seed 42 on CPU.
 Model architecture:
 Sequential(
   (0): Sequential(
@@ -210,7 +210,7 @@ Sequential(
   (1): Linear(in_features=28, out_features=10, bias=True)
 )
 [2024-05-16 18:40:47,672][HYDRA]        #1 : seed=43
-Starting a run with seed 43 and GPU 0.
+Starting a run with seed 43 on CPU.
 Model architecture:
 Sequential(
   (0): Sequential(
@@ -229,7 +229,7 @@ python main.py --multirun seed=42,43 hydra/launcher=slurm_kyiv
 
 Hydra doesn't limit you to iterating over just one parameter. You can also iterate over multiple parameters. For example, to run the code with seeds 42 and 43 and `model.num_hidden` set to 1, 2 and 3, you can do:
 ```bash
-python main.py --multirun seed=42,43 model.hidden_dim=10 model.num_hidden=1,2,3 gpu=0
+python main.py --multirun seed=42,43 model.hidden_dim=10 model.num_hidden=1,2,3
 ```
 This will start 6 jobs: 2 seeds x 3 `model.num_hidden` values.
 
@@ -269,7 +269,7 @@ Let's break down what's going on here:
 ## Global experiment configs
 We already saw that you can create config files to, for example, save a common data module configuration – such a config file is then put in `configs/dm/`. However, such config files can only configure one subcomponent of the whole configuration. This means you might end up with long commands like this one:
 ```bash
-python main.py model=single_linear_layer model.activation=SELU dm=celeba_male_smiling_small dm.download=false gpu=0 seed=1 opt.lr=0.001 opt.weight_decay=0.001
+python main.py model=single_linear_layer model.activation=selu dm=celeba_male_smiling_small dm.download=false seed=1 opt.lr=0.001 opt.weight_decay=0.001
 ```
 which you have to type over and over again.
 
@@ -282,10 +282,9 @@ defaults:
   - dm: celeba_male_smiling_small
 
 seed: 1
-gpu: 0
 
 model:
-  activation: SELU
+  activation: selu
 
 dm:
   download: false
@@ -311,15 +310,80 @@ python main.py -cn good_run model.final_bias=false
 
 **Note**: It's very easy to fall into the trap of defining *everything* in these global configs, but that leads to lots of duplication. Try to put as much configuration as possible into the component-specific config files (i.e., those in `configs/dm/` and `configs/model` and so on), because those configs are easy to reuse across different experiments.
 
+## Config validation
+When you declare a field as, say, `gpu: int` in the dataclass, hydra will ensure that the value given for `gpu` is an `int`. However, often we need to validate configuration values in ways that cannot be expressed as a type. For example, in the code here we require that `gpu` is either `-1`, which indicates that no GPU is used, or is equal to a valid GPU index for the current machine. To validate such constraints on the configuration value, we can use `__post_init__()` in the following way.
+
+```python
+@dataclass(kw_only=True)
+class Config:
+    """Main configuration class for the code base."""
+
+    # ...all the other fields...
+    gpu: int = 0  # Set to -1 to use CPU.
+
+    def __post_init__(self) -> None:
+        """Post-initialization checks."""
+        # Check that the GPU index is valid.
+        if self.gpu < -1 or self.gpu >= torch.cuda.device_count():
+            raise ValueError(
+                f"Invalid GPU index {self.gpu}. Must be between -1 and "
+                f"{torch.cuda.device_count() - 1}."
+            )
+```
+
+The `__post_init__` is run directly after hydra has instantiated the configuration objects. You can try it out by passing an illegal value:
+
+```bash
+python main.py gpu=-2
+```
+
+The output should look something like this (depending on how many GPUs are available):
+
+```
+Error executing job with overrides: ['gpu=-2']
+Traceback (most recent call last):
+  (...traceback details...)
+ValueError: Invalid GPU index -2. Must be between -1 and 3.
+```
+
 ## How to make your code easily configurable with Hydra
 What we found is the best method to structure your code to make it easy to configure with Hydra is the "builder" or "factory" pattern.
 
 This means you have a dataclass that contains all the configuration values for a particular component of your code (e.g. the model, the data, the optimiser, etc.). And then this class has a `build()` or `init()` method that takes additional arguments which are only available at runtime (e.g. the input size of the model, the number of classes in the dataset, etc.), and then instantiates the component.
 
-For example, in this code base, we have the `ModelFactory` class in `src/model.py`:
+For example, say your code has such a function for constructing a convolutional neural network:
 
 ```python
-@dataclass(eq=False)  # this needs to be a dataclass even though it has no fields
+def build_simple_cnn(
+    in_dim: int,
+    out_dim: int,
+    kernel_size: int = 5,
+    pool_stride: int = 2,
+    activation: Activation = "relu",
+) -> nn.Sequential:
+    return nn.Sequential(...)
+```
+
+Then we can pull the configurable parameters into a dataclass and re-write it like this
+
+```python
+@dataclass(kw_only=True)
+class SimpleCNNFactory(ModelFactory):
+    """Factory for a very simple CNN."""
+
+    kernel_size: int = 5
+    pool_stride: int = 2
+    activation: Activation = "relu"
+
+    @override
+    def build(self, in_dim: int, *, out_dim: int) -> nn.Sequential:
+        return nn.Sequential(...)  # use `self.kernel_size` etc.
+```
+
+In this code, we also have an abstract base class, which allows us to provide a better type annotation for hydra:
+
+```python
+@dataclass  # this needs to be a dataclass even though it has no fields
 class ModelFactory(ABC):
     """Interface for model factories."""
 
@@ -328,21 +392,7 @@ class ModelFactory(ABC):
         raise NotImplementedError()
 ```
 
-And when you add a model to the code base, you subclass `ModelFactory` and implement the `build()` method:
-
-```python
-@dataclass(eq=False, kw_only=True)
-class SimpleCNNFactory(ModelFactory):
-    """Factory for a very simple CNN."""
-
-    kernel_size: int = 5
-    pool_stride: int = 2
-    activation: Activation = Activation.RELU
-
-    @override
-    def build(self, in_dim: int, *, out_dim: int) -> nn.Sequential:
-        # (implementation of the model)
-```
+As you can see, `SimpleCNNFactory` above inherits from this.
 
 ## Using the current date in config values
 Hydra comes with a built-in `now` resolver which formats the current date and time with a [`strftime`](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes) pattern. This is useful, for example, for grouping W&B runs by the day they were started:

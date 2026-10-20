@@ -3,5 +3,5 @@ defaults:
   - fcn
 
 num_hidden: 0
-activation: RELU
+activation: relu
 norm: null

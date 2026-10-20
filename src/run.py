@@ -38,11 +38,21 @@ class Config:
 
     # These are normal fields, for which we can specify defaults.
     seed: int = 42
-    gpu: int = 0  # Set to -1 to use CPU.
+    gpu: int = -1  # Set to -1 to use CPU.
+
+    def __post_init__(self) -> None:
+        """Post-initialization checks."""
+        # Check that the GPU index is valid.
+        if self.gpu < -1 or self.gpu >= torch.cuda.device_count():
+            raise ValueError(
+                f"Invalid GPU index {self.gpu}. Must be between -1 and "
+                f"{torch.cuda.device_count() - 1}."
+            )
 
     def run(self, config_for_logging: dict[str, Any]) -> float:
         """Run the experiment."""
-        print(f"Starting a run with seed {self.seed} and GPU {self.gpu}.")
+        device = f"GPU {gpu}" if (gpu := self.gpu) >= 0 else "CPU"
+        print(f"Starting a run with seed {self.seed} on {device}.")
         # Set the seed for reproducibility.
         torch.manual_seed(self.seed)
 

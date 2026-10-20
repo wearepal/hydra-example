@@ -1,34 +1,35 @@
 """Neural network models definitions."""
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable
 from dataclasses import dataclass
-from enum import Enum
-from typing_extensions import override
+from typing import Literal, override
 
 from torch import nn
 
-
-class Activation(Enum):
-    """Activation functions for neural networks as a handy enum."""
-
-    RELU = (nn.ReLU,)
-    GELU = (nn.GELU,)
-    SELU = (nn.SELU,)
-    SILU = (nn.SiLU,)
-
-    def __init__(self, init: Callable[[], nn.Module]) -> None:
-        self.init = init
+type Activation = Literal["relu", "gelu", "selu", "silu"]
 
 
-class NormType(Enum):
-    """Normalization layers for neural networks as a handy enum."""
+def _get_activation(activation: Activation) -> nn.Module:
+    match activation:
+        case "relu":
+            return nn.ReLU()
+        case "gelu":
+            return nn.GELU()
+        case "selu":
+            return nn.SELU()
+        case "silu":
+            return nn.SiLU()
 
-    BN = (nn.BatchNorm1d,)
-    LN = (nn.LayerNorm,)
 
-    def __init__(self, init: Callable[[int], nn.Module]) -> None:
-        self.init = init
+type NormType = Literal["BN", "LN"]
+
+
+def _get_norm(norm_type: NormType, num_features: int) -> nn.Module:
+    match norm_type:
+        case "BN":
+            return nn.BatchNorm1d(num_features)
+        case "LN":
+            return nn.LayerNorm(num_features)
 
 
 # Even though the following abstract class doesn't have any fields, we nevertheless need
@@ -36,7 +37,7 @@ class NormType(Enum):
 # type annotation in the `Config` class.
 
 
-@dataclass(eq=False)
+@dataclass
 class ModelFactory(ABC):
     """Interface for model factories."""
 
@@ -45,14 +46,14 @@ class ModelFactory(ABC):
         raise NotImplementedError()
 
 
-@dataclass(eq=False, kw_only=True)
+@dataclass(kw_only=True)
 class FcnFactory(ModelFactory):
     """Factory for fully-connected neural networks."""
 
     num_hidden: int = 1
     hidden_dim: int | None = None
-    activation: Activation = Activation.GELU
-    norm: NormType | None = NormType.LN
+    activation: Activation = "gelu"
+    norm: NormType | None = "LN"
     dropout_prob: float = 0.0
     final_bias: bool = True
     input_norm: bool = False
@@ -61,8 +62,8 @@ class FcnFactory(ModelFactory):
         block = nn.Sequential()
         block.append(nn.Linear(in_features, out_features))
         if self.norm is not None:
-            block.append(self.norm.init(out_features))
-        block.append(self.activation.init())
+            block.append(_get_norm(self.norm, out_features))
+        block.append(_get_activation(self.activation))
         if self.dropout_prob > 0:
             block.append(nn.Dropout(p=self.dropout_prob))
         return block
@@ -75,7 +76,7 @@ class FcnFactory(ModelFactory):
         if with_flatten:
             predictor.append(nn.Flatten())
         if self.input_norm and (self.norm is not None):
-            predictor.append(self.norm.init(in_dim))
+            predictor.append(_get_norm(self.norm, in_dim))
         curr_dim = in_dim
         if self.num_hidden > 0:
             hidden_dim = in_dim if self.hidden_dim is None else self.hidden_dim
@@ -90,27 +91,27 @@ class FcnFactory(ModelFactory):
         return predictor
 
 
-@dataclass(eq=False, kw_only=True)
+@dataclass(kw_only=True)
 class SimpleCNNFactory(ModelFactory):
     """Factory for a very simple CNN."""
 
     kernel_size: int = 5
     pool_stride: int = 2
-    activation: Activation = Activation.RELU
+    activation: Activation = "relu"
 
     @override
     def build(self, in_dim: int, *, out_dim: int) -> nn.Sequential:
         return nn.Sequential(
             nn.Conv2d(in_channels=in_dim, out_channels=6, kernel_size=self.kernel_size),
-            self.activation.init(),
+            _get_activation(self.activation),
             nn.MaxPool2d(kernel_size=2, stride=self.pool_stride),
             nn.Conv2d(in_channels=6, out_channels=16, kernel_size=self.kernel_size),
-            self.activation.init(),
+            _get_activation(self.activation),
             nn.MaxPool2d(kernel_size=2, stride=self.pool_stride),
             nn.Flatten(),
             nn.Linear(in_features=16 * 5 * 5, out_features=120),
-            self.activation.init(),
+            _get_activation(self.activation),
             nn.Linear(in_features=120, out_features=84),
-            self.activation.init(),
+            _get_activation(self.activation),
             nn.Linear(in_features=84, out_features=out_dim),
         )

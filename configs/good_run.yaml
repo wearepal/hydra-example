@@ -6,10 +6,9 @@ defaults:
   - dm: celeba_male_smiling_small
 
 seed: 1
-gpu: 0
 
 model:
-  activation: SELU
+  activation: selu
 
 dm:
   download: false

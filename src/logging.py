@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from typing import Any, Literal, TypeAlias
+from typing import Any, Literal
 
 import wandb
 from wandb import sdk
@@ -7,7 +7,7 @@ from wandb.sdk import lib
 
 __all__ = ["WandbCfg"]
 
-Run: TypeAlias = sdk.wandb_run.Run | lib.disabled.RunDisabled | None
+type Run = sdk.wandb_run.Run | lib.disabled.RunDisabled | None
 
 
 @dataclass

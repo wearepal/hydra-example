@@ -3,8 +3,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, TypeAlias
-from typing_extensions import override
+from typing import Literal, override
 
 from torch import Tensor
 from torch.utils.data import Dataset
@@ -12,7 +11,7 @@ from torch.utils.data import Dataset
 __all__ = ["Dataset", "DataModule", "CelebADataModule", "ColoredMNISTDataModule"]
 
 
-@dataclass(kw_only=True, eq=False)
+@dataclass(kw_only=True)
 class DataModule(ABC):
     """Base class for data modules."""
 
@@ -34,10 +33,10 @@ class DataModule(ABC):
     def prepare(self, seed: int) -> None: ...
 
 
-CelebAttr: TypeAlias = Literal["Blond_Hair", "Male", "Smiling"]
+type CelebAttr = Literal["Blond_Hair", "Male", "Smiling"]
 
 
-@dataclass(kw_only=True, eq=False)
+@dataclass(kw_only=True)
 class CelebADataModule(DataModule):
     """Data-module for the CelebA dataset."""
 
@@ -70,7 +69,7 @@ class CelebADataModule(DataModule):
         pass
 
 
-@dataclass(kw_only=True, eq=False)
+@dataclass(kw_only=True)
 class ColoredMNISTDataModule(DataModule):
     """Data-module for the ColoredMNIST dataset."""
 

@@ -16,7 +16,9 @@ def main(hydra_config: omegaconf.DictConfig) -> float:
     # The `hydra_config` object we get is essentially a dictionary.
     # We convert it to an object of the `Config` class using `OmegaConf.to_object()`.
     config = omegaconf.OmegaConf.to_object(hydra_config)
-    assert isinstance(config, Config)
+    assert isinstance(config, Config), (
+        f"Expected config to be of type {Config}, but got {type(config)}"
+    )
 
     # `prepare_for_logging` takes a hydra config dict and makes it prettier for logging.
     # Things this function does: turn enums to strings, resolve any references, etc.

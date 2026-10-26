@@ -33,6 +33,9 @@ def context() -> Iterator[ValidationContext]:
         # A primary config that selects a default for every config group; here,
         # the same as `config_name` in `@hydra.main()`.
         config_with_defaults="default_config",
+        # Configs in these subdirectories are primary configs (selected with
+        # `--config-name experiments/<name>`), not options of a config group.
+        primary_config_dirs=["experiments"],
     ) as context:
         yield context
 

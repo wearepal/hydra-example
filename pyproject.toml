@@ -6,7 +6,7 @@ authors = [{ name = "Thomas M Kehrenberg", email = "tmke8@posteo.net" }]
 dependencies = [
     "omegaconf~=2.4.0",
     "hydra-core~=1.4.0rc1",
-    "hydra-qol~=0.2.2",
+    "hydra-qol~=0.2.3",
     "torch~=2.14.1",
     "wandb~=0.30.0",
     "hydra-submitit-launcher~=1.4.0rc1",
